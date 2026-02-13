@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار المهارات - صح وخطأ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#1e40af',
+                        accent: '#f59e0b',
+                        dark: '#1e293b',
+                        success: '#10b981',
+                        danger: '#ef4444'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+        }
+        .floating-btn {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .floating-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+        }
+        .question-card {
+            transition: all 0.3s ease;
+        }
+        .question-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+        }
+        .result-item {
+            animation: fadeIn 0.5s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .progress-bar {
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+        /* Custom radio button styling */
+        input[type="radio"]:checked + span {
+            color: #1e40af;
+            font-weight: bold;
+        }
+        .option-label:has(input:checked) {
+            background-color: #dbeafe;
+            border-color: #3b82f6;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-right">
+    <!-- Floating Navigation Buttons -->
+    <div class="fixed bottom-8 left-8 z-50 space-y-4 ltr">
+        <!-- Buttons removed or repositioned if needed, currently kept hidden via logic or can be used for debugging -->
+    </div>
+
+    <!-- Subject Selection Page -->
+    <div id="subjectSelectionPage" class="container mx-auto px-4 py-12 min-h-screen flex items-center justify-center">
+        <div class="max-w-4xl w-full">
+            <h1 class="text-4xl font-bold text-center mb-4 text-dark">منصة اختبار المهارات</h1>
+            <p class="text-center text-gray-600 mb-12 text-lg">اختر المادة وابدأ التحدي الآن</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Communication Skills -->
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden transform hover:scale-105 transition-transform duration-300 border-b-4 border-blue-500">
+                    <div class="p-6">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+                            <i class="fas fa-comments text-blue-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-dark mb-2 text-center">مهارات الاتصال</h3>
+                        <p class="text-gray-600 mb-6 text-center text-sm">القدرة على التعبير عن الآراء والمشاعر بوضوح وفعالية</p>
+                        <button onclick="startSubjectTest('مهارات الاتصال')" class="w-full bg-primary hover:bg-secondary text-white py-3 rounded-lg font-semibold transition-colors duration-300 shadow-md">
+                            ابدأ الاختبار
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Political Science Principles -->
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden transform hover:scale-105 transition-transform duration-300 border-b-4 border-green-500">
+                    <div class="p-6">
+                        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+                            <i class="fas fa-gavel text-green-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-dark mb-2 text-center">مبادئ العلوم السياسية</h3>
+                        <p class="text-gray-600 mb-6 text-center text-sm">فهم بناء الدولة ونظام الحكم والمؤسسات السياسية</p>
+                        <button onclick="startSubjectTest('مبادئ العلوم السياسيه')" class="w-full bg-primary hover:bg-secondary text-white py-3 rounded-lg font-semibold transition-colors duration-300 shadow-md">
+                            ابدأ الاختبار
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Human Rights -->
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden transform hover:scale-105 transition-transform duration-300 border-b-4 border-red-500">
+                    <div class="p-6">
+                        <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+                            <i class="fas fa-hand-holding-heart text-red-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-dark mb-2 text-center">حقوق الإنسان</h3>
+                        <p class="text-gray-600 mb-6 text-center text-sm">مبادئ وقوانين حماية حقوق الإنسان الأساسية</p>
+                        <button onclick="startSubjectTest('حقوق الانسان')" class="w-full bg-primary hover:bg-secondary text-white py-3 rounded-lg font-semibold transition-colors duration-300 shadow-md">
+                            ابدأ الاختبار
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Organizational Behavior -->
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden transform hover:scale-105 transition-transform duration-300 border-b-4 border-purple-500">
+                    <div class="p-6">
+                        <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+                            <i class="fas fa-users text-purple-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-dark mb-2 text-center">السلوك التنظيمي</h3>
+                        <p class="text-gray-600 mb-6 text-center text-sm">فهم سلوك الأفراد والجماعات في المؤسسات</p>
+                        <button onclick="startSubjectTest('السلوك التنظيمى')" class="w-full bg-primary hover:bg-secondary text-white py-3 rounded-lg font-semibold transition-colors duration-300 shadow-md">
+                            ابدأ الاختبار
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Critical Thinking -->
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden transform hover:scale-105 transition-transform duration-300 border-b-4 border-yellow-500">
+                    <div class="p-6">
+                        <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+                            <i class="fas fa-brain text-yellow-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-dark mb-2 text-center">التفكير الابتكاري</h3>
+                        <p class="text-gray-600 mb-6 text-center text-sm">تطوير قدرات التحليل والاستنتاج والإبداع</p>
+                        <button onclick="startSubjectTest('التفكير الابتكارى')" class="w-full bg-primary hover:bg-secondary text-white py-3 rounded-lg font-semibold transition-colors duration-300 shadow-md">
+                            ابدأ الاختبار
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Business Math -->
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden transform hover:scale-105 transition-transform duration-300 border-b-4 border-indigo-500">
+                    <div class="p-6">
+                        <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+                            <i class="fas fa-calculator text-indigo-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-dark mb-2 text-center">رياضيات الأعمال</h3>
+                        <p class="text-gray-600 mb-6 text-center text-sm">التطبيق العملي لعلوم الرياضيات في إدارة الأعمال</p>
+                        <button onclick="startSubjectTest('رياضيات الأعمال')" class="w-full bg-primary hover:bg-secondary text-white py-3 rounded-lg font-semibold transition-colors duration-300 shadow-md">
+                            ابدأ الاختبار
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test Page -->
+    <div id="testPage" class="hidden container mx-auto px-4 py-12 min-h-screen flex flex-col items-center">
+        <div class="max-w-3xl w-full">
+            <div class="mb-8">
+                <div class="flex justify-between items-end mb-2">
+                    <h1 id="currentSubjectTitle" class="text-2xl font-bold text-dark"></h1>
+                    <div class="text-sm font-semibold text-primary bg-blue-50 px-3 py-1 rounded-full">
+                        السؤال <span id="currentQuestionIndex">1</span> من <span id="totalQuestions">10</span>
+                    </div>
+                </div>
+                
+                <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden shadow-inner">
+                    <div id="progressBar" class="bg-primary h-3 rounded-full progress-bar shadow-md"></div>
+                </div>
+            </div>
+
+            <div id="questionsContainer" class="space-y-8 min-h-[300px]">
+                <!-- Questions will be dynamically added here -->
+            </div>
+
+            <div class="flex justify-between mt-10 w-full">
+                <button id="prevQuestionBtn" class="px-6 py-3 bg-white text-gray-700 border border-gray-300 rounded-lg font-semibold hover:bg-gray-50 transition-colors duration-300 shadow-sm hidden">
+                    <i class="fas fa-arrow-right ml-2"></i> السابق
+                </button>
+                
+                <button id="nextQuestionBtn" class="px-8 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-secondary transition-colors duration-300 shadow-lg hidden mr-auto">
+                    التالي <i class="fas fa-arrow-left mr-2"></i>
+                </button>
+                
+                <button id="submitBtn" class="px-8 py-3 bg-success text-white rounded-lg font-bold hover:bg-green-600 transition-colors duration-300 shadow-lg mr-auto hidden">
+                    إرسال الإجابات <i class="fas fa-check-circle mr-2"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Page -->
+    <div id="resultsPage" class="hidden container mx-auto px-4 py-12 min-h-screen">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-3xl font-bold text-center text-dark mb-8">نتائج الاختبار</h1>
+            
+            <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                <h2 id="subjectResultsTitle" class="text-2xl font-bold text-dark mb-6 text-center"></h2>
+                
+                <div class="flex justify-center mb-8">
+                    <div class="relative w-48 h-48">
+                        <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90">
+                            <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#eee" stroke-width="3"/>
+                            <path id="circleProgress" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#3b82f6" stroke-width="3" stroke-dasharray="0,100" class="transition-all duration-1000 ease-out"/>
+                        </svg>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                            <span id="scorePercentage" class="text-4xl font-bold text-dark">0%</span>
+                            <span class="text-gray-500 text-sm mt-1">النتيجة النهائية</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                    <div class="bg-blue-50 rounded-xl p-4 text-center border border-blue-100">
+                        <div class="text-3xl font-bold text-blue-600 mb-1" id="totalScore">0</div>
+                        <div class="text-gray-600 text-sm">إجمالي النقاط</div>
+                    </div>
+                    <div class="bg-green-50 rounded-xl p-4 text-center border border-green-100">
+                        <div class="text-3xl font-bold text-green-600 mb-1" id="correctCount">0</div>
+                        <div class="text-gray-600 text-sm">الإجابات الصحيحة</div>
+                    </div>
+                    <div class="bg-red-50 rounded-xl p-4 text-center border border-red-100">
+                        <div class="text-3xl font-bold text-red-600 mb-1" id="incorrectCount">0</div>
+                        <div class="text-gray-600 text-sm">الإجابات الخاطئة</div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-center space-x-4 space-x-reverse">
+                    <button onclick="retryTest()" class="px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-secondary transition-colors duration-300 shadow-md">
+                        <i class="fas fa-redo ml-2"></i> إعادة الاختبار
+                    </button>
+                    <button onclick="goToNextSubject()" class="px-6 py-3 bg-gray-700 text-white rounded-lg font-semibold hover:bg-gray-800 transition-colors duration-300 shadow-md">
+                        المادة التالية <i class="fas fa-arrow-left mr-2"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div id="detailedResults" class="bg-white rounded-2xl shadow-xl p-8">
+                <h3 class="text-xl font-bold text-dark mb-6 border-b pb-4">مراجعة الإجابات</h3>
+                <div id="wrongAnswersList" class="space-y-6">
+                    <!-- Detailed results will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample questions data - Updated to "صح" and "خطأ"
+        const questionsData = {
+            "مهارات الاتصال": [
+                {
+                    question: "هل تُعتبر القدرة على الاستماع فهمًا كاملًا للرسالة؟",
+                    options: ["صح", "خطأ"],
+                    correctAnswer: 0,
+                    explanation: "الاستماع الجيد يتطلب فهماً كاملًا للرسالة المرسلة"
+                },
+                {
+                    question: "هل يمكن أن يكون التواصل غير لفظي أكثر فاعلية من التواصل اللفظي؟",
+                    options: ["صح", "خطأ"],
+                    correctAnswer: 0,
+                    explanation: "التواصل غير اللفظي مثل التعبيرات والمظهر يمكن أن يحمل معاني أعمق"
+                },
+                {
+                    question: "هل يجب على المتحدث أن يستخدم أسلوبًا رسمياً في جميع المواقف؟",
+                    options: ["صح", "خطأ"],
+                    correctAnswer: 1,
+                    explanation: "يجب تكييف أسلوب التواصل مع الموقف والجمهور المستهدف"
+                },
+                {
+                    question: "هل تحسين مهارات الاتصال يؤثر على العلاقات الشخصية فقط؟",
+                    options: ["صح", "خطأ"],
+                    correctAnswer: 1,
+                    explanation: "مؤثر على العلاقات المهنية والشخصية والاجتماعية"
+                },
+                {
+                    question: "هل استخدام الرموز والصور في التواصل يزيد من فعاليته؟",
+                    options: ["صح", "خطأ"],
+                    correctAnswer: 0,
+                    explanation: "الرموز والصور تساعد في توصيل الرسالة بسرعة ووضوح"
+                }
+            ],
+            "مبادئ العلوم السياسيه": [
+                {
+                    question: "ما هي الوظيفة الأساسية للدولة في النظام السياسي؟",
+                    options: ["تنظيم الحياة الاقتصادية فقط", "تنظيم الحياة السياسية والاجتماعية", "الحد من حرية المواطنين", "تحديد أهداف الاقتصاد"],
+                    correctAnswer: 1,
+                    explanation: "الدولة تضمن الاستقرار الاجتماعي والسياسي"
+                },
+                {
+                    question: "ما هو أحد أهم مكونات النظام السياسي؟",
+                    options: ["العلاقات الدولية", "الحكومة", "الاقتصاد", "الثقافة"],
+                    correctAnswer: 1,
+                    explanation: "الحكومة تُعد من المكونات الأساسية للأنظمة السياسية"
+                },
+                {
+                    question: "هل تُعتبر الديمقراطية نظامًا سياسيًا؟",
+                    options: ["صح", "خطأ"],
+                    correctAnswer: 0,
+                    explanation: "الديمقراطية تُعتبر نظامًا سياسيًا يعتمد على شعبية الحكم"
+                },
+                {
+                    question: "ما هو دور القضاء في النظام السياسي؟",
+                    options: ["تنظيم الاقتصاد", "إنفاذ القانون وحماية الحقوق", "إدارة التعليم", "تنظيم التجارة"],
+                    correctAnswer: 1,
+                    explanation: "القضاء يضمن إنفاذ القانون وحماية حقوق المواطنين"
+                },
+                {
+                    question: "هل يمكن أن تكون هناك دولة بدون سياسة؟",
+                    options: ["صح", "خطأ"],
+                    correctAnswer: 1,
+                    explanation: "الدولة تحتاج إلى نظام سياسي لتنظيم المجتمع"
+                }
+            ],
+            "حقوق الانسان": [
+                {
+                    question: "هل يشمل حق التعليم جميع الأشخاص دون استثناء؟",
+                    options: ["صح", "خطأ"],
+                    correctAnswer: 0,
+                    explanation: "حق التعليم يشمل جميع الأشخاص بغض النظر عن الجنس أو العرق أو الديانة"
+                },
+                {
+                    question: "هل حق الصحة يشمل فقط الخدمات الطبية المباشرة؟",
+                    options: ["صح", "خطأ"],
+                    correctAnswer: 1,
+                    explanation: "حق الصحة يشمل أيضاً البيئة الصحية والظروف المعيشية الجيدة"
+                },
+                {
+                    question: "هل يمكن القيود على حقوق الإنسان في حالات الطوارئ؟",
+                    options: ["صح، دائماً", "صح، في ظروف محددة", "خطأ، أبداً"],
+                    correctAnswer: 1,
+                    explanation: "يمكن القيود في حالات الطوارئ، لكن يجب أن تكون محدودة ومتناسبة"
+                },
+                {
+                    question: "هل يُعتبر الحق في الملكية يحمي جميع أشكال الملكية؟",
+                    options: ["صح", "خطأ"],
+                    correctAnswer: 0,
+                    explanation: "حق الملكية يحمي الملكية المشروعة وليس كل أنواع الملكية"
+                },
+                {
+                    question: "هل حق الحريات العامة لا يشمل حرية التعبير؟",
+                    options: ["صح", "خطأ"],
+                    correctAnswer: 1,
+                    explanation: "حرية التعبير من أهم الحريات العامة"
+                }
+            ],
+            "السلوك التنظيمي": [
+                {
+                    question: "هل يمكن أن يُعتبر سلوك الموظف في العمل مثالاً على السلوك التنظيمي؟",
+                    options: ["صح", "خطأ"],
+                    correctAnswer: 0,
+                    explanation: "سلوك الموظف يعكس السلوك التنظيمي داخل المؤسسة"
+                },
+                {
+                    question: "ما هو العنصر الأساسي في تأثير السلوكيات التنظيمية؟",
+                    options: ["الهيكل الهرمي", "القيادة", "السياسات", "الموارد البشرية"],
+                    correctAnswer: 1,
+                    explanation: "القيادة تلعب دوراً محورياً في تشكيل السلوك التنظيمي"
+                },
+                {
+                    question: "هل يمكن أن تؤثر ثقافة المؤسسة على سلوك الموظفين؟",
+                    options: ["صح", "خطأ"],
+                    correctAnswer: 0,
+                    explanation: "الثقافة التنظيمية تشكل سلوك الموظفين وتوجهاتهم"
+                },
+                {
+                    question: "هل تعني تغييرات سلوك الموظفين أنفسهم تغييرات تكتيكية؟",
+                    options: ["صح", "خطأ"],
+                    correctAnswer: 1,
+                    explanation: "التغييرات الفعلية تتطلب تغييرات استراتيجية وليس فقط تكتيكية"
+                },
+                {
+                    question: "هل يُعتبر التواصل الفعال جزءاً من السلوك التنظيمي؟",
+                    options: ["صح", "خطأ"],
+                    correctAnswer: 0,
+                    explanation: "التواصل الفعال يعزز من العلاقة بين الموظفين والمدير"
+                }
+            ],
+            "التفكير الابتكارى": [
+                {
+                    question: "هل التفكير الابتكاري يتطلب التعلم من الأخطاء السابقة؟",
+                    options: ["صح", "خطأ"],
+                    correctAnswer: 0,
+                    explanation: "التعلم من الأخطاء أساسي في عملية الابتكار"
+                },
+                {
+                    question: "هل التفكير النقدي يُعد من مهارات التفكير الابتكاري؟",
+                    options: ["صح", "خطأ"],
+                    correctAnswer: 0,
+                    explanation: "التفكير النقدي يدعم التفكير الابتكاري من خلال التحليل"
+                },
+                {
+                    question: "هل يمكن أن يُعتبر التفكير الابتكاري مجرد فكرة جديدة؟",
+                    options: ["صح", "خطأ"],
+                    correctAnswer: 1,
+                    explanation: "الإبداع يشمل التطبيق العملي والنتائج العملية"
+                },
+                {
+                    question: "هل يُفضل استخدام التفكير الابتكاري في البيئات الثابتة؟",
+                    options: ["صح", "خطأ"],
+                    correctAnswer: 1,
+                    explanation: "الإبداع أكثر حاجة في البيئات المتغيرة والتحديات الجديدة"
+                },
+                {
+                    question: "هل يُعتبر الحلول التقليدية مثالاً على التفكير الابتكاري؟",
+                    options: ["صح", "خطأ"],
+                    correctAnswer: 1,
+                    explanation: "التفكير الابتكاري يبحث عن حلول جديدة وغير تقليدية"
+                }
+            ],
+            "رياضيات الأعمال": [
+                {
+                    question: "ما هو الغرض من تحليل البيانات في الأعمال؟",
+                    options: ["تحليل الأرباح فقط", "اتخاذ قرارات مدروسة قائمة على الأرقام", "حساب الرسوم فقط"],
+                    correctAnswer: 1,
+                    explanation: "تحليل البيانات يساعد في اتخاذ قرارات مدروسة قائمة على الأرقام"
+                },
+                {
+                    question: "هل يمكن استخدام الرياضيات في توقع المبيعات؟",
+                    options: ["صح", "خطأ"],
+                    correctAnswer: 0,
+                    explanation: "نعم، تُستخدم الرياضيات في توقع المبيعات باستخدام نماذج إحصائية"
+                },
+                {
+                    question: "ما هو الهدف الرئيسي من دراسة الرياضيات في الأعمال؟",
+                    options: ["فهم الأنظمة المعقدة", "كتابة القصائد", "التعليم فقط"],
+                    correctAnswer: 0,
+                    explanation: "الهدف الرئيسي هو فهم الأنظمة المعقدة وحل المشكلات"
+                },
+                {
+                    question: "هل تتطلب الرياضيات في الأعمال مهارات تقنية متقدمة؟",
+                    options: ["صح", "خطأ"],
+                    correctAnswer: 1,
+                    explanation: "لا، الرياضيات في الأعمال تركز على تطبيقات عملية ليست بالضرورة متقدمة"
+                },
+                {
+                    question: "هل يمكن تطبيق الرياضيات في مجالات مختلفة في الأعمال؟",
+                    options: ["صح", "خطأ"],
+                    correctAnswer: 0,
+                    explanation: "نعم، يمكن تطبيق الرياضيات في مجالات متنوعة مثل التسويق والتمويل"
+                }
+            ]
+        };
+
+        let currentSubject = "";
+        let currentQuestionIndex = 0;
+        let answers = [];
+        let currentSubjectQuestions = [];
+
+        function startSubjectTest(subject) {
+            currentSubject = subject;
+            currentQuestionIndex = 0;
+            answers = new Array(questionsData[subject].length).fill(null); // Initialize with null
+            currentSubjectQuestions = questionsData[subject] || [];
+            
+            showPage("testPage");
+            renderQuestions();
+            updateProgress();
+            
+            // Set subject title
+            document.getElementById("currentSubjectTitle").textContent = subject;
+        }
+
+        function renderQuestions() {
+            const questionsContainer = document.getElementById("questionsContainer");
+            questionsContainer.innerHTML = "";
+
+            const currentQuestion = currentSubjectQuestions[currentQuestionIndex];
+            
+            const questionCard = document.createElement("div");
+            questionCard.className = "question-card bg-white rounded-2xl shadow-lg p-8 mx-auto border-t-4 border-primary";
+            
+            let optionsHtml = '';
+            currentQuestion.options.forEach((option, index) => {
+                const isChecked = answers[currentQuestionIndex] === index ? 'checked' : '';
+                
+                // Change style based on True/False
+                let labelClass = "option-label flex items-center p-4 border-2 border-gray-100 rounded-xl cursor-pointer hover:bg-blue-50 hover:border-blue-200 transition-all duration-200 mb-3 group";
+                
+                optionsHtml += `
+                    <label class="${labelClass}">
+                        <input type="radio" name="question-${currentQuestionIndex}" value="${index}" ${isChecked} class="hidden">
+                        <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center mr-4 ml-4 group-hover:border-primary">
+                            <div class="w-3 h-3 rounded-full bg-primary transform scale-0 transition-transform duration-200 ${isChecked ? 'scale-100' : ''}"></div>
+                        </div>
+                        <span class="text-lg text-gray-700 group-hover:text-primary transition-colors">${option}</span>
+                    </label>
+                `;
+            });
+
+            questionCard.innerHTML = `
+                <h3 class="text-2xl font-bold text-dark mb-8 leading-relaxed">${currentQuestion.question}</h3>
+                <div class="space-y-2">
+                    ${optionsHtml}
+                </div>
+            `;
+            
+            questionsContainer.appendChild(questionCard);
+
+            // Update buttons visibility
+            const prevBtn = document.getElementById("prevQuestionBtn");
+            const nextBtn = document.getElementById("nextQuestionBtn");
+            const submitBtn = document.getElementById("submitBtn");
+
+            prevBtn.classList.toggle("hidden", currentQuestionIndex === 0);
+            
+            if (currentQuestionIndex === currentSubjectQuestions.length - 1) {
+                nextBtn.classList.add("hidden");
+                submitBtn.classList.remove("hidden");
+            } else {
+                nextBtn.classList.remove("hidden");
+                submitBtn.classList.add("hidden");
+            }
+            
+            // Update question info
+            document.getElementById("currentQuestionIndex").textContent = currentQuestionIndex + 1;
+            document.getElementById("totalQuestions").textContent = currentSubjectQuestions.length;
+            
+            // Add event listeners for radio buttons
+            const radios = document.querySelectorAll(`input[name="question-${currentQuestionIndex}"]`);
+            radios.forEach(radio => {
+                radio.addEventListener("change", function() {
+                    answers[currentQuestionIndex] = parseInt(this.value);
+                    // Force re-render to update styles (or just toggle classes manually)
+                    renderQuestions();
+                });
+            });
+        }
+
+        function updateProgress() {
+            const progressPercent = ((currentQuestionIndex + 1) / currentSubjectQuestions.length) * 100;
+            document.getElementById("progressBar").style.width = `${progressPercent}%`;
+        }
+
+        function nextQuestion() {
+            if (answers[currentQuestionIndex] === null) {
+                // Optional: Alert if no answer selected
+                // alert("الرجاء اختيار إجابة للمتابعة");
+                // return;
+            }
+            
+            if (currentQuestionIndex < currentSubjectQuestions.length - 1) {
+                currentQuestionIndex++;
+                renderQuestions();
+                updateProgress();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestions();
+                updateProgress();
+            }
+        }
+
+        function submitAnswers() {
+            if (answers[currentQuestionIndex] === null) {
+                // alert("الرجاء اختيار إجابة للمتابعة");
+                // return;
+            }
+
+            // Calculate results
+            let correctCount = 0;
+            let wrongAnswers = [];
+            
+            currentSubjectQuestions.forEach((question, index) => {
+                if (answers[index] === question.correctAnswer) {
+                    correctCount++;
+                } else {
+                    wrongAnswers.push({
+                        question: question.question,
+                        correctAnswer: question.options[question.correctAnswer],
+                        userAnswer: answers[index] !== null ? question.options[answers[index]] : "لم يتم الإجابة",
+                        explanation: question.explanation
+                    });
+                }
+            });
+            
+            const incorrectCount = currentSubjectQuestions.length - correctCount;
+            const percentage = Math.round((correctCount / currentSubjectQuestions.length) * 100);
+            
+            // Display results
+            document.getElementById("subjectResultsTitle").textContent = `نتيجة اختبار: ${currentSubject}`;
+            document.getElementById("scorePercentage").textContent = `${percentage}%`;
+            document.getElementById("totalScore").textContent = correctCount;
+            document.getElementById("correctCount").textContent = correctCount;
+            document.getElementById("incorrectCount").textContent = incorrectCount;
+            
+            // Determine color based on score
+            const circle = document.getElementById("circleProgress");
+            if (percentage >= 80) circle.setAttribute("stroke", "#10b981"); // Green
+            else if (percentage >= 50) circle.setAttribute("stroke", "#f59e0b"); // Orange
+            else circle.setAttribute("stroke", "#ef4444"); // Red
+
+            // Update progress circle (with slight delay for animation)
+            setTimeout(() => {
+                circle.style.strokeDasharray = `${percentage},100`;
+            }, 100);
+            
+            // Display detailed results
+            const wrongAnswersList = document.getElementById("wrongAnswersList");
+            wrongAnswersList.innerHTML = "";
+            
+            if (wrongAnswers.length > 0) {
+                wrongAnswers.forEach((item, index) => {
+                    const wrongItem = document.createElement("div");
+                    wrongItem.className = "result-item bg-red-50 border border-red-100 rounded-lg p-4";
+                    wrongItem.innerHTML = `
+                        <div class="font-bold text-dark mb-2 flex items-start">
+                            <span class="bg-red-200 text-red-800 text-xs px-2 py-1 rounded ml-2 mt-1">خطأ</span>
+                            ${item.question}
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                            <div class="text-red-700 bg-red-100 p-2 rounded">
+                                <span class="font-bold ml-1">إجابتك:</span> ${item.userAnswer}
+                            </div>
+                            <div class="text-green-700 bg-green-100 p-2 rounded">
+                                <span class="font-bold ml-1">الصحيح:</span> ${item.correctAnswer}
+                            </div>
+                        </div>
+                        <div class="mt-2 text-gray-600 text-sm bg-white p-2 rounded border border-gray-100">
+                            <i class="fas fa-info-circle text-blue-500 ml-1"></i> <span class="font-semibold">توضيح:</span> ${item.explanation}
+                        </div>
+                    `;
+                    wrongAnswersList.appendChild(wrongItem);
+                });
+            } else {
+                wrongAnswersList.innerHTML = `
+                    <div class="text-center p-8 bg-green-50 rounded-xl border border-green-100">
+                        <i class="fas fa-trophy text-green-500 text-4xl mb-4"></i>
+                        <p class="text-green-800 font-bold text-lg">أحسنت! جميع الإجابات صحيحة.</p>
+                        <p class="text-green-600">أداء ممتاز، استمر في التقدم.</p>
+                    </div>
+                `;
+            }
+            
+            showPage("resultsPage");
+        }
+
+        function retryTest() {
+            startSubjectTest(currentSubject);
+        }
+
+        function goToNextSubject() {
+            showPage("subjectSelectionPage");
+        }
+
+        function showPage(pageId) {
+            document.getElementById("subjectSelectionPage").classList.add("hidden");
+            document.getElementById("testPage").classList.add("hidden");
+            document.getElementById("resultsPage").classList.add("hidden");
+            
+            const page = document.getElementById(pageId);
+            page.classList.remove("hidden");
+            
+            // Reset scroll to top
+            window.scrollTo(0, 0);
+            
+            // Reset circle animation if showing results
+            if (pageId === "resultsPage") {
+                 document.getElementById("circleProgress").style.strokeDasharray = "0,100";
+            }
+        }
+
+        // Event Listeners for Navigation Buttons
+        document.getElementById("nextQuestionBtn").addEventListener("click", nextQuestion);
+        document.getElementById("prevQuestionBtn").addEventListener("click", prevQuestion);
+        document.getElementById("submitBtn").addEventListener("click", submitAnswers);
+
+        // Initialize the page
+        showPage("subjectSelectionPage");
+    </script>
+</body>
+</html>
