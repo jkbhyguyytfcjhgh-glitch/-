@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>الرياضيات | ENG / HAMODEY</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+:root {
+  --primary: #38bdf8;
+  --bg-dark: #0f172a;
+  --box-bg: #020617;
+  --choice-bg: #1e293b;
+  --correct: #16a34a;
+  --wrong: #dc2626;
+}
+
+body {
+  background: var(--bg-dark);
+  color: #fff;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  margin: 0;
+  padding: 10px;
+  text-align: right;
+}
+
+#progress-wrapper {
+  width: 100%;
+  height: 8px;
+  background: #334155;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+#progress-bar {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), #818cf8);
+  border-radius: 10px;
+  transition: 0.4s;
+}
+
+.header { text-align: center; margin-bottom: 20px; }
+.name {
+  font-size: 28px;
+  font-weight: bold;
+  color: var(--primary);
+  text-shadow: 0 0 15px var(--primary);
+}
+
+.box {
+  background: var(--box-bg);
+  padding: 25px;
+  border-radius: 18px;
+  max-width: 800px;
+  margin: auto;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+/* ===== السؤال — بسيط وواضح ===== */
+.question {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 18px;
+  line-height: 2;
+  color: #f1f5f9;
+  direction: rtl;
+}
+
+/* ===== الاختيارات — صف واحد بسيط ===== */
+.choice {
+  background: var(--choice-bg);
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+  border: 1px solid transparent;
+  font-size: 16px;
+  line-height: 1.9;
+  direction: rtl;
+  display: block;
+}
+.choice:hover { background: #334155; border-color: var(--primary); }
+
+.correct { background: var(--correct) !important; animation: pulse 0.5s; }
+.wrong   { background: var(--wrong)   !important; animation: shake 0.4s; }
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25%       { transform: translateX(-5px); }
+  75%       { transform: translateX(5px); }
+}
+
+.result-screen { text-align: center; }
+.result-score  { font-size: 40px; color: var(--primary); margin-bottom: 20px; }
+
+.review-item {
+  text-align: right;
+  background: #1e293b;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  border-right: 5px solid var(--wrong);
+}
+.review-q { font-weight: bold; margin-bottom: 5px; line-height: 2; }
+.review-a { font-size: 14px; line-height: 2; }
+
+.btn {
+  background: var(--primary);
+  color: #000;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 10px;
+  transition: 0.3s;
+}
+.btn:hover { transform: scale(1.05); opacity: 0.9; }
+
+footer { margin-top: 30px; text-align: center; color: #94a3b8; font-size: 14px; }
+
+/* ===== عناصر رياضية بسيطة — تظهر inline مع النص ===== */
+.m {
+  display: inline;
+  direction: ltr;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  color: #fbbf24;
+  unicode-bidi: embed;
+}
+
+.frac {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  vertical-align: middle;
+  margin: 0 3px;
+  direction: ltr;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  color: #fbbf24;
+  font-size: 0.9em;
+  line-height: 1.2;
+}
+.frac .num {
+  border-bottom: 1.5px solid currentColor;
+  padding: 0 4px 1px;
+  text-align: center;
+  min-width: 16px;
+}
+.frac .den {
+  padding: 1px 4px 0;
+  text-align: center;
+  min-width: 16px;
+}
+
+.lim-block {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  vertical-align: middle;
+  direction: ltr;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  color: #fbbf24;
+  margin: 0 3px;
+  line-height: 1.1;
+}
+.lim-block .lim-word { font-size: 1em; }
+.lim-block .lim-sub  { font-size: 0.68em; color: #93c5fd; white-space: nowrap; }
+
+.lfrac {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  vertical-align: middle;
+  direction: ltr;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  color: #fbbf24;
+  margin: 0 3px;
+  font-size: 0.9em;
+  line-height: 1.2;
+}
+.lfrac .num { border-bottom: 1.5px solid currentColor; padding: 0 4px 1px; text-align: center; }
+.lfrac .den { padding: 1px 4px 0; text-align: center; }
+
+.int-sym {
+  display: inline;
+  font-size: 1.6em;
+  line-height: 1;
+  vertical-align: middle;
+  color: #fbbf24;
+  font-family: serif;
+  margin: 0 1px;
+}
+
+.int-def {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  direction: ltr;
+  gap: 1px;
+}
+.int-lim {
+  display: inline-flex;
+  flex-direction: column;
+  font-size: 0.62em;
+  line-height: 1.3;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  color: #93c5fd;
+}
+.int-lim .upper { align-self: flex-start; }
+.int-lim .lower { align-self: flex-start; }
+
+.matrix {
+  display: inline-table;
+  vertical-align: middle;
+  text-align: center;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #fff;
+  border-radius: 3px;
+  padding: 2px 5px;
+  margin: 2px 4px;
+  direction: ltr;
+  background: rgba(255,255,255,0.06);
+  font-family: monospace;
+  font-size: 14px;
+  color: #fbbf24;
+}
+.matrix td { padding: 2px 6px; text-align: center; }
+
+/* ألوان داخل الاختيارات */
+.choice .m,
+.choice .frac,
+.choice .lfrac,
+.choice .int-sym { color: #e2e8f0; }
+
+.correct .m, .correct .frac, .correct .lfrac,
+.wrong   .m, .wrong   .frac, .wrong   .lfrac { color: #fff; }
+</style>
+</head>
+
+<body>
+
+<div id="progress-wrapper"><div id="progress-bar"></div></div>
+
+<div class="header">
+  <div class="name">🔥 الرياضيات 🔥</div>
+  <div style="color:#94a3b8; margin-top:5px;">ENG / HAMODEY</div>
+</div>
+
+<div class="box">
+  <div id="setup-screen" class="result-screen">
+    <h3>اختر ترتيب الأسئلة المفضل:</h3>
+    <button class="btn" onclick="startQuiz('original')">الترتيب الأساسي</button>
+    <button class="btn" onclick="startQuiz('shuffle')">ترتيب عشوائي 🔀</button>
+  </div>
+  <div id="quiz" style="display:none;"></div>
+</div>
+
+<footer>
+  <div style="margin-bottom:10px;"></div>
+  <p>© جميع الحقوق محفوظة لـ ENG/HAMODEY</p>
+</footer>
+
+<script>
+/* ===== دوال بناء الرياضيات ===== */
+function m(t)          { return `<span class="m">${t}</span>`; }
+function frac(n,d)     { return `<span class="frac"><span class="num">${n}</span><span class="den">${d}</span></span>`; }
+function lim(sub,expr) {
+  return `<span class="lim-block"><span class="lim-word">lim</span><span class="lim-sub">${sub}</span></span> ${expr}`;
+}
+function lfrac(n,d)    { return `<span class="lfrac"><span class="num">${n}</span><span class="den">${d}</span></span>`; }
+function intg(expr)    { return `<span class="int-sym">∫</span> <span class="m">${expr}</span>`; }
+function intd(lo,hi,expr) {
+  return `<span class="int-def"><span class="int-sym">∫</span><span class="int-lim"><span class="upper">${hi}</span><span class="lower">${lo}</span></span></span> <span class="m">${expr}</span>`;
+}
+function mat(rows) {
+  return '<table class="matrix">' +
+    rows.map(r=>'<tr>'+r.map(c=>`<td>${c}</td>`).join('')+'</tr>').join('') +
+  '</table>';
+}
+
+/* ===== الأسئلة ===== */
+const originalQuestions = [
+
+
+{q:`1- ما نوع الدالة ${m('f(x) = x + 1')}`,
+ choices:[`A - كثيرة حدود من الدرجة أولى`,`B - كثيرة حدود من الدرجة ثانية`,`C - خطية`,`D - A or C`], correct:3},
+
+{q:`2- ما نوع الدالة ${m('f(x) = √x + x²')}`,
+ choices:[`A - ليست كثيرة الحدود`,`B - ثانية`,`C - تربيعية`,`D - B or C`], correct:0},
+
+{q:`3- إذا كانت الدالة ${m('f(x) = x² - x + 1')} فإن`,
+ choices:[`A - ${m('f(0) = 3')}`,`B - ${m('f(-1) = 0')}`,`C - ${m('f(1) = 1')}`,`D - إجابة أخرى`], correct:2},
+
+{q:`4- إذا كانت الدالة ${m('f(x) = x² - x + 1')} فإن`,
+ choices:[`A - ${m('f(1) = 3')}`,`B - ${m('f(1) = 0')}`,`C - ${m('f(0) = 1')}`,`D - إجابة أخرى`], correct:2},
+
+{q:`5- ما نوع الدالة ${m('f(x) = sin(x + 1)')}`,
+ choices:[`A - مثلثية`,`B - غير جبرية`,`C - خطية`,`D - A or B`], correct:3},
+
+{q:`6- الدالة ${m('f(x) = x + 1')} : كثيرة حدود من الدرجة`,
+ choices:[`A - أولى`,`B - ثانية`,`C - الثالثة`,`D - A or C`], correct:0},
+
+{q:`7- إذا كانت الدالة ${m('f(x) = x² - x + 1')} فإن`,
+ choices:[`A - زوجية`,`B - فردية`,`C - أسية`,`D - ليست زوجية ولا فردية`], correct:3},
+
+{q:`8- ما نوع الدالة ${m('f(x) = sin(x + 1)')}`,
+ choices:[`A - مثلثية`,`B - غير جبرية`,`C - خطية`,`D - A or B`], correct:3},
+
+{q:`9- ما نوع الدالة ${m('f(x) = sin(x + 1)')}`,
+ choices:[`A - جبرية`,`B - غير جبرية`,`C - أسية`,`D - قياسية`], correct:1},
+
+{q:`10- ما نوع الدالة ${m('f(x) = cosh(x + 1)')}`,
+ choices:[`A - أسية`,`B - مثلثية`,`C - زائدية`,`D - كثيرة الحدود`], correct:2},
+
+{q:`11- ${lim('x→0', lfrac('1','x+1'))} = .....`,
+ choices:[`A - 1`,`B - صفر`,`C - ∞`,`D - إجابة أخرى`], correct:0},
+
+{q:`12- ${lim('x→5', lfrac('3','x-5'))} = .....`,
+ choices:[`A - 1`,`B - صفر`,`C - ∞`,`D - إجابة أخرى`], correct:2},
+
+{q:`13- ${lim('x→-2', lfrac('x²-4','x+2'))} = .....`,
+ choices:[`A - صفر`,`B - 2`,`C - -4`,`D - غير معرفة`], correct:2},
+
+{q:`14- ${lim('x→-2', lfrac('x⁴-16','x²-4'))} = .....`,
+ choices:[`A - صفر`,`B - غير معرفة`,`C - 4`,`D - إجابة أخرى`], correct:3},
+
+{q:`15- واذا كانت الدالة ${m('f(x) = x³ + x')} فإن <br>${lim('x→1', m('x³+x'))} = .....`,
+ choices:[`A - 2`,`B - 1`,`C - صفر`,`D - إجابة أخرى`], correct:0},
+
+{q:`16- ${lim('x→5', lfrac('3','x-5'))} = .....`,
+ choices:[`A - 1`,`B - صفر`,`C - ∞`,`D - إجابة أخرى`], correct:2},
+
+{q:`17- وهذه الدالة ${lim('x→5', lfrac('3','x-5'))} مستمره عند ...`,
+ choices:[`A - 1`,`B - صفر`,`C - 5`,`D - A or B`], correct:3},
+
+{q:`18- ${lim('x→-2', lfrac('x⁴-16','x²-4'))} = .....`,
+ choices:[`A - صفر`,`B - غير معرفة`,`C - 4`,`D - إجابة أخرى`], correct:3},
+
+{q:`19- إذا كانت ${m('f(x) = x² + 2x - 3')} فإن ${m("y' = .....")}`,
+ choices:[`A - ${m('2x')}`,`B - ${m('2x + 1')}`,`C - ${m('2x - 3')}`,`D - إجابة أخرى`], correct:3},
+
+{q:`20- وهذه الدالة ${m('f(x) = x² + 2x - 3')} مستمره عند ...`,
+ choices:[`A - 2`,`B - 1`,`C - 6`,`D - كل ما سبق`], correct:3},
+
+{q:`21- إذا كانت ${m('f(x) = (ln5x) + 1')} فإن ${m("f'(x) = .....")}`,
+ choices:[`A - ${frac('5','x')}`,`B - ${frac('1','x')}`,`C - ${frac('1','5x')}`,`D - إجابة أخرى`], correct:1},
+
+{q:`22- إذا كانت ${m('f(x) = e^(2x-3)')} فإن ${m("f'(x) = .....")}`,
+ choices:[`A - ${m('e^(2x-3)')}`,`B - ${m('2e^(2x-3)')}`,`C - ${m('2e^(2x)')}`,`D - إجابة أخرى`], correct:1},
+
+{q:`23- إذا كانت ${m('f(x) = (3x + 1)³ + 2e')} فإن ${m("f'(x) = .....")}`,
+ choices:[`A - ${m('3(3x + 1)³')}`,`B - ${m('3(3x - 1)³')}`,`C - ${m('9(3x + 1)³')}`,`D - غير معرفة`], correct:2},
+
+{q:`24- إذا كانت <br>${m('f(x) =')} ${frac('1','3')}${m('sin(2x) + ln2')} فإن ${m("f'(x) = .....")}`,
+ choices:[
+   `A - ${frac('2','3')}${m('cos(2x)')}`,
+   `B - غير معرفة`,
+   `C - ${frac('1','3')}${m('cos(2x)')}`,
+   ` ${frac('1','2')}${m('cos(2x)+')}${frac('2','3')}`
+ ], correct:0},
+
+{q:`25- إذا كانت ${m('f(x) =')} ${frac('2x-3','x²')} فإن ${m("y' = .....")}`,
+ choices:[
+   `A - ${frac('2x²+4x²-6x','x²')}`,
+   `B - ${frac('2x²+4x²-6x','x⁴')}`,
+   `C - ${frac('2x²-3','x²')}`,
+   `D - إجابة أخرى`
+ ], correct:1},
+
+{q:`26- إذا كانت ${m('f(x) =')} ${frac('1','3')}${m('x³ + x² - 3x + 1')} فإن ${m("f'(x) = .....")}`,
+ choices:[
+   `A - ${m('x² + 2x - 3')}`,
+   `B - ${m('x² + x - 3')}`,
+   `C - ${frac('1','3')}${m('x² + x - 1')}`,
+   `D - إجابة أخرى`
+ ], correct:0},
+
+{q:`27- ${frac('d²y','dx²')} = .....`,
+ choices:[`A - ${m('x² + x')}`,`B - ${m('2x + 2')}`,`C - ${m('x - 3')}`,`D - إجابة أخرى`], correct:1},
+
+{q:`28- ولهذه الدالة ${frac('d²y','dx²')}  ...... عظمى وصغري`,
+ choices:[`A - ثلاث نقاط`,`B - نقطة`,`C - نقطتين`,`D - إجابة أخرى`], correct:2},
+
+{q:`29- إذا كانت النقطة الحرجة تسبقها فترة تزايد وتليها فترة تناقص تكون ......`,
+ choices:[`A - نقطة صغرى`,`B - نقطة عظمى`,`C - نقطة على خط مستقيم`,`D - إجابة أخرى`], correct:1},
+
+{q:`30- إذا كانت ${m('y = u³ + v² + 3uv')} فإن ${frac('∂y','∂u')} = .....`,
+ choices:[`A - ${m('3u² + 3v')}`,`B - ${m('3u + 2v')}`,`C - ${m('3u² + 2v')}`,`D - إجابة أخرى`], correct:0},
+
+{q:`31- إذا كانت ${m('y = u³ + v² + 3uv')} فإن ${frac('∂y','∂v')} = .....`,
+ choices:[`A - ${m('3u² + 3v')}`,`B - ${m('3u + 2v')}`,`C - ${m('3u² + 2v')}`,`D - إجابة أخرى`], correct:1},
+
+{q:`32- إذا كانت ${m('y = u³ + v² + 3uv')} فإن ${frac('∂²y','∂u²')} = .....`,
+ choices:[`A - ${m('6u + 3v')}`,`B - ${m('6u + 2v')}`,`C - ${m('6u')}`,`D - إجابة أخرى`], correct:2},
+
+{q:`33- إذا كانت ${m('y = u³ + v² + 3uv')} فإن ${frac('∂²y','∂u∂v')} = .....`,
+ choices:[`A - ${m('3u')}`,`B - ${m('2v')}`,`C - ${m('3')}`,`D - إجابة أخرى`], correct:2},
+
+{q:`34- إذا كانت ${m('y = u³ + v² + 3uv')} فإن ${frac('∂²y','∂v²')} = .....`,
+ choices:[`A - ${m('3u')}`,`B - ${m('2v')}`,`C - ${m('3')}`,`D - إجابة أخرى`], correct:3},
+
+{q:`35-\u200E ${intg('3^(2x-1) dx')} `,
+ choices:[
+   `A - ${frac('3^(2x-1)','2ln3')} + k`,
+   `B - ${m('3^(2x-1)')} + k`,
+   `C - ${frac('3^(2x)','2x')} + k`,
+   `D - إجابة أخرى`
+ ], correct:0},
+
+{q:`36- \u200E${intg('e^(3x+4) dx')} فإن .....`,
+ choices:[
+   `A - ${frac('e^(3x+4)','3lne')} + k`,
+   `B - ${frac('e^(3x+4)','3')} + k`,
+   `C - ${m('e^(3x+4)')} + k`,
+   `D - A or B`
+ ], correct:3},
+
+{q:`37- \u200E${intg('1/(2x-5)³ dx')} = .....`,
+ choices:[
+   `A - ${frac('1','4(2x-5)²')} + k`,
+   `B - ${frac('1','(2x-5)²')} + k`,
+   `C - ${frac('1','-4(2x-5)²')} + k`,
+   `D - إجابة أخرى`
+ ], correct:2},
+
+{q:`38- \u200E${intg('2/(2x-5) dx')} = .....`,
+ choices:[
+   `A - ${m('ln(2x - 5)')}`,
+   `B - ${m('ln(2x - 5)')} + k`,
+   `C - ${m('(2x - 5)')}`,
+   `D - إجابة أخرى`
+ ], correct:1},
+
+{q:`39- \u200E${intg('x(x² + 1)⁴ dx')} = .....`,
+ choices:[
+   `A - ${m('(x² + 1)⁴')}`,
+   `B - ${m('x(x² + 1)⁴')}`,
+   `C - ${m('x(x² + 1)⁵')}`,
+   `D - إجابة أخرى`
+ ], correct:3},
+
+{q:`40- أبعاد المصفوفة ${mat([[1,3],[2,1],[1,0]])} هي`,
+ choices:[`A - 3 × 2`,`B - 3 × 3`,`C - 2 × 3`,`D - إجابة أخرى`], correct:0},
+
+{q:`41- أبعاد المصفوفة ${mat([[1,2,-2],[-3,0,4]])} هي`,
+ choices:[`A - 3 × 2`,`B - 3 × 3`,`C - 2 × 3`,`D - إجابة أخرى`], correct:2},
+
+{q:`42- المصفوفة المربعة هي المصفوفة`,
+ choices:[
+   `A - ${mat([[1,3],[1,2],[1,0]])}`,
+   `B - ${mat([[1,2,-2],[-3,0,4]])}`,
+   `C - ${mat([[1,-2,3],[-3,2,0],[4,1,3]])}`,
+   `D - A , C معا`
+ ], correct:2},
+
+{q:`43- المصفوفة التي تسمى متجه هي`,
+ choices:[
+   `A - ${mat([[1,3],[1,2],[2,4]])}`,
+   `B - ${mat([[1,2,-2],[-3,0,4]])}`,
+   `C - ${mat([[1,5,7]])}`,
+   `D - ${mat([[1,0,0],[0,1,0],[0,0,1]])}`
+ ], correct:2},
+
+{q:`44- إذا كانت ${m('A')} = ${mat([[1,3],[2,1],[1,0]])} و ${m('D')} = ${mat([[1,3],[1,2],[2,4]])} فإن ${m('A + D = .....')}`,
+ choices:[
+   `A - ${mat([[0,0],[1,-1],[-1,-4]])}`,
+   `B - ${mat([[2,6],[3,3],[3,4]])}`,
+   `C - ${mat([[2,6],[3,3],[3,-4]])}`,
+   `D - إجابة أخرى`
+ ], correct:1},
+
+{q:`45- إذا كانت ${m('A')} = ${mat([[1,3],[2,1],[1,0]])} و ${m('D')} = ${mat([[1,3],[1,2],[2,4]])} فإن ${m('A - D = .....')}`,
+ choices:[
+   `A - ${mat([[0,0],[1,-1],[-1,-4]])}`,
+   `B - ${mat([[2,6],[3,3],[3,4]])}`,
+   `C - ${mat([[2,6],[3,3],[3,-4]])}`,
+   `D - إجابة أخرى`
+ ], correct:0},
+
+{q:`46- إذا كانت ${m('A')} = ${mat([[1,3],[2,1],[1,0]])} و ${m('D')} = ${mat([[1,3],[1,2],[2,4]])} فإن ${m('D ..... A')}`,
+ choices:[`A - ${m('>')}`,`B - ${m('<')}`,`C - ${m('=')}`,`D - ${m('≠')}`], correct:3},
+
+{q:`47- تسمى المصفوفة ${mat([[1,0,0],[0,2,0],[0,0,3]])}`,
+ choices:[`A - إجابة أخرى`,`B - مصفوفة قطرية`,`C - مصفوفة ثلاثة`,`D - مصفوفة غير قطرية`], correct:1},
+
+{q:`48- تسمى المصفوفة ${mat([[1,0,0],[0,1,0],[0,0,1]])}`,
+ choices:[`A - مصفوفة الوحدة`,`B - مصفوفة قطرية`,`C - مصفوفة ثلاثة`,`D - إجابة أخرى`], correct:0},
+
+{q:`49- إذا كان أحد أبعاد المصفوفة تساوي واحد فإن المصفوفة تسمى`,
+ choices:[`A - متجه`,`B - مصفوفة قطرية`,`C - مصفوفة ثلاثة`,`D - إجابة أخرى`], correct:0},
+
+{q:`50- التكامل الذي له حد أدنى وحد أعلى يسمى تكامل`,
+ choices:[`A - غير محدود`,`B - بالتعويض`,`C - محدود`,`D - إجابة أخرى`], correct:2},
+
+
+{q:`51- \u200E${intd('a','a','f(x)dx')} = .....`,
+ choices:[`A - ${m('a')}`,`B - ${m('b')}`,`C - ${m('0')}`,`D - إجابة أخرى`], correct:2},
+
+{q:`52- \u200E${intd('a','b','f(x)')} ..... ${m('-')} \u200E${intd('b','a','f(x)')}`,
+ choices:[`A - ${m('>')}`,`B - ${m('<')}`,`C - ${m('≠')}`,`D - ${m('=')}`], correct:3},
+
+{q:`53- إذا كان هناك متغيران مستقلان فأكثر ويكون المطلوب إيجاد تفاضل التابع بالنسبة لأحد المتغيرات المستقلة هذا يسمى`,
+ choices:[`A - تفاضل جزئي`,`B - تفاضل كلي`,`C - تكامل`,`D - إجابة أخرى`], correct:0},
+
+{q:`54- معدل التغير اللحظي للدالة يكون معدل ايجابيا إذا كانت الدالة في`,
+ choices:[`A - تناقص`,`B - ثبات`,`C - تزايد`,`D - إجابة أخرى`], correct:2},
+
+{q:`55- معدل التغير اللحظي للدالة يكون سلبيا إذا كانت الدالة في`,
+ choices:[`A - تناقص`,`B - ثبات`,`C - تزايد`,`D - إجابة أخرى`], correct:0},
+
+{q:`56- إذا كانت المشتقة أشارتها موجبة لجميع قيم ${m('x ∈ R')} فإن هذه الدالة ......... دائما`,
+ choices:[`A - متناقصة`,`B - ثبات`,`C - متزايدة`,`D - إجابة أخرى`], correct:2},
+
+{q:`57- النقطة الحرجة للدالة ${m('f(x) = x² - 2x + 3')} هي`,
+ choices:[`A - ${m('(2,3)')}`,`B - ${m('(0,2)')}`,`C - ${m('(2,1)')}`,`D - ${m('(1,2)')}`], correct:3},
+
+{q:`58- النقطة الحرجة للدالة ${m('f(x) = x² + 2x - 1')} هي`,
+ choices:[`A - ${m('(2,3)')}`,`B - ${m('(-1,-2)')}`,`C - ${m('(2,1)')}`,`D - ${m('(1,2)')}`], correct:1},
+
+{q:`59- ناتج قسمة أي عدد على ${m('∞')} يساوي`,
+ choices:[`A - ${m('-1')}`,`B - ${m('1')}`,`C - ${m('0')}`,`D - إجابة أخرى`], correct:2},
+
+{q:`60- في الدالة ......... لا توجد نقاط عظمى أو صغري`,
+ choices:[`A - الخطية`,`B - كثيرة حدود`,`C - الأسية`,`D - إجابة أخرى`], correct:0}
+
+];
+
+/* ===== منطق الكويز ===== */
+let questions = [];
+let index = 0;
+let score = 0;
+let locked = false;
+let userHistory = [];
+const quiz = document.getElementById("quiz");
+const setupScreen = document.getElementById("setup-screen");
+const progBar = document.getElementById("progress-bar");
+
+function startQuiz(order) {
+  if (order === 'shuffle') {
+    questions = [...originalQuestions].sort(() => Math.random() - 0.5);
+  } else {
+    questions = [...originalQuestions];
+  }
+  setupScreen.style.display = "none";
+  quiz.style.display = "block";
+  showQuestion();
+}
+
+function showQuestion() {
+  const progress = (index / questions.length) * 100;
+  progBar.style.width = progress + "%";
+  if (index >= questions.length) { finishQuiz(); return; }
+  locked = false;
+  const q = questions[index];
+  quiz.innerHTML = `
+    <div style="color:var(--primary); font-size:14px; margin-bottom:10px;">سؤال ${index+1} من ${questions.length}</div>
+    <div class="question">${q.q}</div>
+    ${q.choices.map((c,i) => `<div class="choice" onclick="answer(this,${i})">${c}</div>`).join("")}
+  `;
+}
+
+function answer(el, i) {
+  if (locked) return;
+  locked = true;
+  const q = questions[index];
+  userHistory.push({
+    question: q.q,
+    userAnswer: q.choices[i],
+    correctAnswer: q.choices[q.correct],
+    isCorrect: i === q.correct
+  });
+  if (i === q.correct) {
+    el.classList.add("correct");
+    score++;
+  } else {
+    el.classList.add("wrong");
+    if (navigator.vibrate) navigator.vibrate(200);
+    document.querySelectorAll(".choice")[q.correct].classList.add("correct");
+  }
+  setTimeout(() => { index++; showQuestion(); }, 1200);
+}
+
+function finishQuiz() {
+  progBar.style.width = "100%";
+  const percent = Math.round((score / questions.length) * 100);
+  if (percent >= 50) confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+  quiz.innerHTML = `
+    <div class="result-screen">
+      <div class="result-score">${score} / ${questions.length}</div>
+      <h3>${percent >= 50 ? "أحسنت يا بشمهندس! 🎉" : "حاول مرة أخرى! 💪"}</h3>
+      <p>نسبة النجاح: ${percent}%</p>
+      <button class="btn" onclick="location.reload()">إعادة الاختبار</button>
+      <button class="btn" style="background:#fff" onclick="showReview()">مراجعة الأخطاء فقط 🧐</button>
+    </div>
+  `;
+}
+
+function showReview() {
+  const errors = userHistory.filter(item => !item.isCorrect);
+  let reviewHTML = `<h3 style="color:var(--primary)">الأخطاء التي وقعت فيها (${errors.length}):</h3>`;
+  if (errors.length === 0) {
+    reviewHTML += `<p>ممتاز! لا توجد أخطاء لمراجعتها.</p>`;
+  } else {
+    errors.forEach(item => {
+      reviewHTML += `
+        <div class="review-item">
+          <div class="review-q">${item.question}</div>
+          <div class="review-a">
+            إجابتك: <span style="color:var(--wrong)">${item.userAnswer}</span><br><br>
+            الإجابة الصحيحة: <span style="color:var(--correct)">${item.correctAnswer}</span>
+          </div>
+        </div>`;
+    });
+  }
+  reviewHTML += `<button class="btn" onclick="location.reload()">العودة للرئيسية</button>`;
+  quiz.innerHTML = reviewHTML;
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>
