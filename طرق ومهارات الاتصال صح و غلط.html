@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>إمتحان طرق ومهارات الاتصال - ENG/HAMODEY</title>
+<style>
+    :root {
+        --primary-gold: #f1c40f;
+        --dark-bg: #0f2027;
+        --card-bg: rgba(30, 30, 30, 0.95);
+        --correct-green: #2ecc71;
+        --wrong-red: #e74c3c;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin:0; padding:20px;
+        display:flex; flex-direction:column; align-items:center;
+        min-height:100vh;
+        background: linear-gradient(270deg, #0f2027, #203a43, #2c5364);
+        background-size:400% 400%;
+        animation: gradientBG 15s ease infinite;
+        color:#ecf0f1;
+    }
+    @keyframes gradientBG {
+        0%{background-position:0% 50%;}
+        50%{background-position:100% 50%;}
+        100%{background-position:0% 50%;}
+    }
+
+    .container {
+        max-width:750px; width:100%;
+        background: var(--card-bg);
+        border-radius:20px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+        padding:25px;
+        z-index:1;
+        position: relative;
+    }
+
+    h1.title {
+        color: var(--primary-gold);
+        text-align:center;
+        margin-bottom:10px;
+        text-shadow: 0 0 15px rgba(241, 196, 15, 0.4);
+    }
+
+    #mode-selection {
+        display: flex; flex-direction: column; gap: 15px; margin-top: 20px;
+    }
+
+    .mode-card {
+        background: rgba(255,255,255,0.05);
+        padding: 20px; border-radius: 12px; border: 1px solid #444;
+        cursor: pointer; transition: 0.3s; text-align: center;
+    }
+    .mode-card:hover { background: rgba(241, 196, 15, 0.15); border-color: var(--primary-gold); }
+    .mode-card h3 { margin: 0; color: var(--primary-gold); }
+
+    .progress-container {
+        width: 100%; background: #333; border-radius: 10px; height: 10px; margin: 20px 0; display: none;
+    }
+    .progress-bar {
+        height: 100%; background: var(--primary-gold); width: 0%; border-radius: 10px; transition: 0.3s;
+    }
+
+    .question-box {
+        font-size:1.3rem; font-weight:600; margin:20px 0; line-height: 1.6;
+        background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px;
+        border-right: 5px solid var(--primary-gold); display: none;
+    }
+
+    .answers { display:none; flex-direction:column; gap:15px; }
+
+    button.answer-btn, .nav-btn, .retry-btn {
+        font-size:1.1rem; padding:15px; border:2px solid #555; border-radius:12px;
+        background:#1c1c1c; color:#ecf0f1; cursor:pointer; transition: 0.2s; text-align:right;
+    }
+    button.answer-btn:hover { background:#333; border-color: var(--primary-gold); }
+    button.answer-btn.correct { background: var(--correct-green) !important; color: #000; font-weight: bold; }
+    button.answer-btn.incorrect { background: var(--wrong-red) !important; color: #fff; }
+
+    .nav-btn { background: var(--primary-gold); color: #000; font-weight: bold; border: none; margin-top: 15px; width: 100%; text-align: center;}
+    .nav-btn:hover { opacity: 0.9; transform: scale(1.02); }
+
+    .result-screen { text-align:center; display:none; }
+    .score-text { font-size: 2rem; color: var(--primary-gold); margin-bottom: 20px; }
+
+    .wrong-item {
+        background: rgba(231, 76, 60, 0.1); border-right: 4px solid var(--wrong-red);
+        padding: 15px; margin-bottom: 10px; text-align: right; border-radius: 8px;
+    }
+    .wrong-item span { color: var(--correct-green); font-weight: bold; }
+
+    footer { margin-top:30px; text-align:center; font-size:0.9rem; }
+    .links { display:flex; justify-content:center; gap:20px; margin-top:10px; }
+    .links a { color: var(--primary-gold); text-decoration:none; font-weight:bold; }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="title">🌟 إختبار طرق ومهارات الاتصال 🌟</h1>
+    <p style="text-align: center; color: #aaa; margin-top: -10px;">إعداد: ENG/HAMODEY</p>
+
+    <div id="mode-selection">
+        <div class="mode-card" onclick="initQuiz('p1')">
+            <h3>📝 الجزء الأول </h3>
+        </div>
+        <div class="mode-card" onclick="initQuiz('p2')">
+            <h3>📝 الجزء الثاني</h3>
+        </div>
+        <div class="mode-card" onclick="initQuiz('full')">
+            <h3>🏆 كل الاسئله  (1 - 80)</h3>
+        </div>
+    </div>
+
+    <div id="order-selection" style="display:none; text-align: center; margin-top: 20px;">
+        <h3>اختر طريقة عرض الأسئلة:</h3>
+        <button class="nav-btn" onclick="startQuiz('ordered')" style="background: #2980b9; color: white;">🔢 بالترتيب الأصلي</button>
+        <button class="nav-btn" onclick="startQuiz('random')" style="background: #8e44ad; color: white;">🔀 ترتيب عشوائي</button>
+        <button class="nav-btn" onclick="location.reload()" style="background: #555; color: white;">🔙 العودة للرئيسية</button>
+    </div>
+
+    <div class="progress-container" id="progCont"><div class="progress-bar" id="progBar"></div></div>
+    <div class="question-box" id="qBox"></div>
+    <div class="answers" id="aBox"></div>
+
+    <div class="result-screen" id="resScreen">
+        <div class="score-text" id="scoreText"></div>
+        <div id="wrongList"></div>
+        <div id="navButtons"></div>
+    </div>
+</div>
+
+<footer>
+    <div class="links">
+        <a href="https://wa.me/201016227536">واتساب</a>
+        <a href="https://instagram.com/mo7vmed_elbanna">إنستجرام</a>
+    </div>
+    <p>© جميع الحقوق محفوظة لـ ENG/HAMODEY</p>
+</footer>
+
+<script>
+const allQuestions = [
+  { question: "الاتصال هو عملية تفاعلية بين طرفين أو أكثر لتبادل المعاني والمشاعر والأفكار.", correct: true },
+  { question: "تتكون عملية الاتصال من أربعة عناصر فقط: المرسل، الرسالة، الوسيلة، المستقبل.", correct: false },
+  { question: "يجب أن تكون الرسالة الاتصالية صحيحة وصريحة وواضحة وتامة وموجزة حتى تكون ناجحة.", correct: true },
+  { question: "الاتصال عملية يمكن التراجع عنها بعد حدوثها.", correct: false },
+  { question: "يمكن أن يكون الاتصال قصدياً أو غير قصدي.", correct: true },
+  { question: "من أهداف الاتصال: الأهداف الشخصية والاجتماعية والاقتصادية والنفسية والمعرفية والأمنية.", correct: true },
+  { question: "التغذية الراجعة هي إعادة إرسال الرسالة من المرسل إلى المستقبل.", correct: false },
+  { question: "الاتصال عملية منتهية لها بداية ونهاية محددة.", correct: false },
+  { question: "يعتبر الاتصال عملية رمزية تعتمد على الرموز اللغوية وغير اللغوية.", correct: true },
+  { question: "لا يمكن أن تتشابه عمليات الاتصال بين الأفراد لأنها تخضع لخلفيات وظروف مختلفة.", correct: true },
+  { question: "الاتصال اللفظي يقتصر فقط على الكلام والحديث الشفهي.", correct: false },
+  { question: "لغة الجسد وتعبيرات الوجه تعتبر من أنواع الاتصال غير اللفظي.", correct: true },
+  { question: "الاتصال الذاتي هو التفاعل المباشر بين شخصين أو أكثر لتبادل الأفكار.", correct: false },
+  { question: "من خصائص الاتصال الفعال أن تكون الرسالة واضحة ومباشرة وخالية من الغموض.", correct: true },
+  { question: "الاكتفاء بعبارات عامة مثل \"حسننا الأداء هذا العام\" هو تطبيق لمبدأ الملموسية في الاتصال.", correct: false },
+  { question: "الاتصال الرسمي يتبع قنوات وسلطة محددة في المؤسسات ويكون مخططاً له.", correct: true },
+  { question: "التواصل هو مجرد عملية إرسال واستقبال للمعلومات من مرسل إلى مستقبل.", correct: false },
+  { question: "الافتراض المسبق بأن المستقبل يستوعب الرسالة دون تفصيل كافٍ، يعتبر من معوقات الاتصال.", correct: true },
+  { question: "الاهتمام بلغة الجسد وتعبيرات الوجه لا يؤثر على فعالية الاتصال الشفهي.", correct: false },
+  { question: "التغذية العكسية (Feedback) تساعد في التأكد من فهم الرسالة بشكل صحيح.", correct: true },
+  { question: "يُعد الاتصال التنظيمي عملية ثانوية لنقل التعليمات وليس له علاقة بالقدرة التنافسية للمؤسسات.", correct: false },
+  { question: "من خصائص الاتصال التنظيمي أنه عملية جامدة وثابتة لا تتأثر بالأفراد والجماعات داخل المنظمة.", correct: false },
+  { question: "يعتبر المستقبل (المتلقي) في عملية الاتصال وعاءً سلبياً يتلقى الرسالة دون تفسير أو تفاعل.", correct: false },
+  { question: "من أهداف الاتصال التنظيمي دعم عملية اتخاذ القرار من خلال توفير معلومات دقيقة وفي الوقت المناسب.", correct: true },
+  { question: "الاتصال التصاعدي هو تدفق المعلومات من المستويات الإدارية العليا إلى المستويات الدنيا في الهيكل التنظيمي.", correct: false },
+  { question: "الاتصال غير الرسمي هو أسرع في نقل المعلومات من الاتصال الرسمي لكنه قد يكون أقل دقة.", correct: true },
+  { question: "يقتصر الاتصال غير اللفظي على تعابير الوجه فقط، بينما تتمثل بقية المعاني في الكلمات المنطوقة.", correct: false },
+  { question: "الاتصال الأفقي يحدث بين الأفراد أو الإدارات التي تقع على نفس المستوى الهرمي بهدف التنسيق وتبادل الخبرات.", correct: true },
+  { question: "الاتصال الخارجي يحدث داخل حدود المنظمة فقط ويهدف إلى بناء ثقافة تنظيمية موحدة.", correct: false },
+  { question: "تُعد \"التغذية العكسية\" عنصراً أساسياً في عملية الاتصال التنظيمي، حيث تحول مسار الاتصال من خط مستقيم إلى دائرة تبادلية.", correct: true },
+  { question: "الفعالية التنظيمية هي مفهوم أحادي البعد يركز فقط على تحقيق أعلى ربح ممكن.", correct: false },
+  { question: "وفقًا لنظرية تحديد الأهداف، فإن الأهداف الواضحة والمحددة تؤدي إلى أداء أفضل، ويساعد الاتصال الفعال في تحقيق هذا الوضوح.", correct: true },
+  { question: "الاتصال الأفقي هو ذلك الاتصال الذي يربط بين المستويات الإدارية المختلفة في التسلسل الهرمي (الرئيس بالمرؤوس).", correct: false },
+  { question: "تفترض نظرية \"التبادل الاجتماعي\" أن الأفكار الجديدة تنشأ من تبادل المعرفة بين الأفراد والجماعات، وهذا التبادل لا يحدث إلا عبر الاتصال.", correct: true },
+  { question: "لتحفيز الابتكار، يجب على المنظمة توفير \"الأمان النفسي\" الذي يشعر معه الموظفون بالخوف عند اقتراح أفكار جديدة لضمان الجودة.", correct: false },
+  { question: "بناء الثقة في المنظمة لا يعتمد على الاتصال بقدر ما يعتمد على الحوافز المادية والمكافآت.", correct: false },
+  { question: "الصراع في المنظمات ظاهرة غير طبيعية ويجب على الإدارة الجيدة أن تمنعه تمامًا.", correct: false },
+  { question: "من آليات نقل الثقافة التنظيمية عبر الاتصال، قصص الأبطال والإنجازات، واللغة المستخدمة، وسلوك القادة الفعلي.", correct: true },
+  { question: "كثرة المستويات الإدارية تقلل من فرص تشويه الرسالة لأنها تمر بمراجعات متعددة تضمن دقتها.", correct: false },
+  { question: "من عوائق الاتصال التقنية (الرقمية) \"فقدان الإشارات غير اللفظية\" في الاتصال الكتابي، مما يزيد من فرص سوء الفهم.", correct: true },
+  { question: "يعرف الاتصال الفعال بأنه الاتصال الذي يؤدي إلى خلق استجابة تجاه أهداف المؤسسة بأحسن الوسائل وأقل التكاليف.", correct: true },
+  { question: "من مقومات الاتصال التنظيمي الفعال، أن تحتوي العملية الاتصالية على معلومات جديدة، وإلا اعتبرت اتصالات مزعجة.", correct: true },
+  { question: "من مقومات الاتصال التنظيمي الفعال ضرورة زيادة عدد المستويات الإدارية ومركزية القرار.", correct: false },
+  { question: "من خصائص المعلومات في الاتصال الفعال أن تكون المعلومات غير دقيقة وطويلة لتفسيرها بشكل أفضل من قبل المتلقي.", correct: false },
+  { question: "الإنصات النشط (Active Listening) هو الاستماع بهدف الرد السريع، وليس بهدف الفهم العميق.", correct: false },
+  { question: "مهارة الوضوح والإيجاز في الاتصال تساعد على توفير الوقت وتقلل الحاجة إلى إعادة الشرح والتوضيح.", correct: true },
+  { question: "التعاطف (Empathy) هو القدرة على نقل المعلومات فقط، بغض النظر عن مشاعر الآخرين.", correct: false },
+  { question: "من آثار التغذية الراجعة البناءة (Constructive Feedback) أنها تزيد الدفاعية وتقلل الانفتاح بين الأفراد.", correct: false },
+  { question: "المتصل الفعال هو من يستخدم أسلوب اتصال واحدًا ثابتًا يناسب جميع المواقف والأشخاص.", correct: false },
+  { question: "تسهم مهارات الاتصال الفعال في إيجاد حلول فعالة للمشكلات، وتزيد من ثقة الفرد بنفسه.", correct: true },
+  { question: "يعني مبدأ المشاركة في الإدارة اشتراك المرؤوسين في جميع خطوات عملية اتخاذ القرار.", correct: false },
+  { question: "من أسباب فشل الاجتماعات غياب جدول الأعمال الموزع مسبقًا.", correct: true },
+  { question: "تعد التقارير التحليلية مقتصرة على وصف الظاهرة فقط دون تعليل الأسباب.", correct: false },
+  { question: "مرحلة ما بعد انعقاد الاجتماع تشمل توثيق الاجتماع وتقييمه ومتابعة تنفيذ القرارات.", correct: true },
+  { question: "الملخص الوصفي في التقارير يلخص نتائج البحث بالكامل.", correct: false },
+  { question: "من ضوابط التعامل مع زملاء العمل تجنب الغيبة والوشاية والابتعاد عن القيل والقال.", correct: true },
+  { question: "الزميل \"المتحكم والمسيطر\" هو الذي يتصف بالكسل ويوزع مسؤولياته على الآخرين.", correct: false },
+  { question: "من مهارات التعامل مع العملاء مقاطعتهم أثناء شرح المشكلة لتوفير الوقت.", correct: false },
+  { question: "التقارير الإدارية غالبًا ما تكون مطبوعة وبنودها واضحة وتحتاج إلى ملء فراغات.", correct: true },
+  { question: "عدم مشاركة الزملاء في أفراحهم وأحزانهم يخلق فجوة ويجعلهم يشعرون بعدم الاحترام.", correct: true },
+  { question: "معوقات الاتصال يمكن أن تكون مادية (كالضوضاء) أو نفسية (كالغضب).", correct: true },
+  { question: "جميع معوقات الاتصال متساوية في الشدة والتأثير.", correct: false },
+  { question: "معوقات الاتصال تظهر فقط في مرحلة القناة (الوسيط) وليس في مرحلة المرسل أو المستقبل.", correct: false },
+  { question: "يمكن علاج معظم معوقات الاتصال أو تقليل تأثيرها باستراتيجيات مناسبة.", correct: true },
+  { question: "سوء الاتصال يؤدي إلى زيادة التكاليف التشغيلية مثل إعادة العمل وتلف المواد.", correct: true },
+  { question: "ضعف الاتصال الداخلي لا يؤثر على حصة السوق أو ولاء العملاء.", correct: false },
+  { question: "الموظفون في الصفوف الأمامية نادراً ما يملكون أفكاراً ابتكارية، لذلك لا تتأثر المنظمة بفقدان تواصلهم.", correct: false },
+  { question: "الغموض الدائم في الاتصال يسبب قلقاً مزمناً وإجهاداً وظيفياً.", correct: true },
+  { question: "معوقات الاتصال تساعد على تحسين التعاون بين الإدارات المختلفة.", correct: false },
+  { question: "دراسة معوقات الاتصال تساعد في تقليل الصراعات الشخصية الناتجة عن سوء الفهم.", correct: true },
+  { question: "الاستماع الفعال يعني فقط عدم التحدث أثناء حديث الطرف الآخر، دون الحاجة إلى إعادة الصياغة أو طرح أسئلة توضيحية.", correct: false },
+  { question: "من خصائص استراتيجيات التغلب على معوقات الاتصال \"الشمولية والنظرة المنظومية\"، أي أنها تعالج المرسل والرسالة والوسيلة والمستقبل والبيئة معاً.", correct: true },
+  { question: "وضوح الرسالة وإيجازها يساعدان في التغلب على معوق \"الحمل المعلوماتي الزائد\" (Information Overload).", correct: true },
+  { question: "التغذية الراجعة (Feedback) ليست ضرورية إذا كان المرسل يثق بأن المستقبل فهمه تماماً.", correct: false },
+  { question: "الانتباه للغة الجسد والنبرة يساعد في علاج معوق \"التناقض بين الكلمات والجسد\"، حيث أن 93% من تأثير الرسالة يأتي من غير اللفظي.", correct: true },
+  { question: "اختيار وقت غير مناسب (مثل قبل نهاية الدوام بربع ساعة) لا يؤثر على فعالية الاتصال، طالما أن الرسالة واضحة.", correct: false },
+  { question: "التعاطف (Empathy) يعني الموافقة الكاملة على وجهة نظر الطرف الآخر، وليس مجرد فهم مشاعره.", correct: false },
+  { question: "تكييف أسلوب الاتصال يشمل مراعاة الفروق في المستوى الوظيفي؛ فالحديث مع الرئيس يختلف عن الحديث مع المرؤوس.", correct: true },
+  { question: "من خصائص الاستراتيجيات الفعالة \"الاستمرارية\"، أي أنها مجرد إسعاف أولي مؤقت ينتهي بانتهاء المشكلة.", correct: false },
+  { question: "\"الاستباقية\" (Proactiveness) في استراتيجيات الاتصال تعني انتظار وقوع سوء الفهم ثم البحث عن حل سريع.", correct: false },
+];
+
+let currentQuestions = [];
+let quizMode = '';
+let currentIndex = 0;
+let score = 0;
+let missed = [];
+
+function initQuiz(mode) {
+    quizMode = mode;
+    document.getElementById('mode-selection').style.display = 'none';
+    document.getElementById('order-selection').style.display = 'block';
+}
+
+function startQuiz(orderType) {
+    if (quizMode === 'p1') {
+        currentQuestions = allQuestions.slice(0, 40);
+    } else if (quizMode === 'p2') {
+        currentQuestions = allQuestions.slice(40);
+    } else {
+        currentQuestions = [...allQuestions];
+    }
+
+    if (orderType === 'random') {
+        currentQuestions.sort(() => Math.random() - 0.5);
+    }
+
+    document.getElementById('order-selection').style.display = 'none';
+    document.getElementById('progCont').style.display = 'block';
+    document.getElementById('qBox').style.display = 'block';
+    document.getElementById('aBox').style.display = 'flex';
+
+    renderQuestion();
+}
+
+function renderQuestion() {
+    if (currentIndex >= currentQuestions.length) {
+        showResults();
+        return;
+    }
+
+    const q = currentQuestions[currentIndex];
+    document.getElementById('qBox').innerHTML = q.question;
+
+    const percent = (currentIndex / currentQuestions.length) * 100;
+    document.getElementById('progBar').style.width = percent + '%';
+
+    const aBox = document.getElementById('aBox');
+    aBox.innerHTML = '';
+
+    ['صح', 'خطأ'].forEach((text, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'answer-btn';
+        btn.textContent = text;
+        btn.onclick = () => checkAnswer(i === 0, q, btn);
+        aBox.appendChild(btn);
+    });
+}
+
+function checkAnswer(userAns, qObj, btn) {
+    const allBtns = document.querySelectorAll('.answer-btn');
+    allBtns.forEach(b => b.disabled = true);
+
+    if (userAns === qObj.correct) {
+        btn.classList.add('correct');
+        score++;
+    } else {
+        btn.classList.add('incorrect');
+        missed.push({ q: qObj.question, a: qObj.correct ? 'صح' : 'خطأ' });
+    }
+
+    setTimeout(() => {
+        currentIndex++;
+        renderQuestion();
+    }, 600);
+}
+
+function showResults() {
+    document.getElementById('progCont').style.display = 'none';
+    document.getElementById('qBox').style.display = 'none';
+    document.getElementById('aBox').style.display = 'none';
+
+    const resScreen = document.getElementById('resScreen');
+    resScreen.style.display = 'block';
+
+    document.getElementById('scoreText').textContent = `نتيجتك: ${score} من ${currentQuestions.length}`;
+
+    const wrongList = document.getElementById('wrongList');
+    wrongList.innerHTML = missed.length > 0 ? '<h3>❌ الأسئلة التي أخطأت فيها:</h3>' : '<h3 style="color:var(--correct-green)">🌟 ممتاز! لا توجد أخطاء.</h3>';
+
+    missed.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'wrong-item';
+        div.innerHTML = `❓ ${item.q} <br> ✅ الإجابة الصحيحة هي: <span>${item.a}</span>`;
+        wrongList.appendChild(div);
+    });
+
+    const nav = document.getElementById('navButtons');
+    nav.innerHTML = '';
+
+    if (quizMode === 'p1') {
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'nav-btn';
+        nextBtn.textContent = '➡️ انتقل لإمتحان الجزء الثاني';
+        nextBtn.onclick = () => { resetVars(); initQuiz('p2'); };
+        nav.appendChild(nextBtn);
+    }
+
+    const homeBtn = document.createElement('button');
+    homeBtn.className = 'nav-btn';
+    homeBtn.style.background = '#555';
+    homeBtn.style.color = '#fff';
+    homeBtn.textContent = '🔄 العودة للقائمة الرئيسية';
+    homeBtn.onclick = () => location.reload();
+    nav.appendChild(homeBtn);
+}
+
+function resetVars() {
+    currentIndex = 0;
+    score = 0;
+    missed = [];
+    document.getElementById('resScreen').style.display = 'none';
+}
+</script>
+
+</body>
+</html>
