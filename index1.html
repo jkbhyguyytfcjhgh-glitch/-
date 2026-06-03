@@ -2,111 +2,158 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
+<title>العلوم السياسيه اختياري | ENG / HAMODEY</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>إمتحان طرق ومهارات الاتصال - ENG/HAMODEY</title>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
 <style>
-    :root {
-        --primary-gold: #f1c40f;
-        --dark-bg: #0f2027;
-        --card-bg: rgba(30, 30, 30, 0.95);
-        --correct-green: #2ecc71;
-        --wrong-red: #e74c3c;
-    }
+:root {
+  --primary: #38bdf8;
+  --bg-dark: #0f172a;
+  --box-bg: #020617;
+  --choice-bg: #1e293b;
+  --correct: #16a34a;
+  --wrong: #dc2626;
+}
 
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        margin:0; padding:20px;
-        display:flex; flex-direction:column; align-items:center;
-        min-height:100vh;
-        background: linear-gradient(270deg, #0f2027, #203a43, #2c5364);
-        background-size:400% 400%;
-        animation: gradientBG 15s ease infinite;
-        color:#ecf0f1;
-    }
-    @keyframes gradientBG {
-        0%{background-position:0% 50%;}
-        50%{background-position:100% 50%;}
-        100%{background-position:0% 50%;}
-    }
+body {
+  background: var(--bg-dark);
+  color: #fff;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  margin: 0;
+  padding: 10px;
+  text-align: right;
+}
 
-    .container {
-        max-width:750px; width:100%;
-        background: var(--card-bg);
-        border-radius:20px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-        padding:25px;
-        z-index:1;
-        position: relative;
-    }
+#progress-wrapper {
+  width: 100%;
+  height: 8px;
+  background: #334155;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+#progress-bar {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), #818cf8);
+  border-radius: 10px;
+  transition: 0.4s;
+}
 
-    h1.title {
-        color: var(--primary-gold);
-        text-align:center;
-        margin-bottom:10px;
-        text-shadow: 0 0 15px rgba(241, 196, 15, 0.4);
-    }
+.header { text-align: center; margin-bottom: 20px; }
+.name {
+  font-size: 28px;
+  font-weight: bold;
+  color: var(--primary);
+  text-shadow: 0 0 15px var(--primary);
+}
 
-    #mode-selection {
-        display: flex; flex-direction: column; gap: 15px; margin-top: 20px;
-    }
+.salah-banner {
+  background: linear-gradient(135deg, #1e3a5f, #0f2540);
+  border: 1px solid #38bdf855;
+  border-radius: 14px;
+  padding: 14px 20px;
+  margin: 0 auto 18px auto;
+  max-width: 800px;
+  text-align: center;
+  font-size: 17px;
+  color: #fbbf24;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 20px rgba(56,189,248,0.15);
+  animation: glow 3s ease-in-out infinite alternate;
+}
+@keyframes glow {
+  from { box-shadow: 0 4px 15px rgba(251,191,36,0.1); }
+  to   { box-shadow: 0 4px 25px rgba(251,191,36,0.35); }
+}
 
-    .mode-card {
-        background: rgba(255,255,255,0.05);
-        padding: 20px; border-radius: 12px; border: 1px solid #444;
-        cursor: pointer; transition: 0.3s; text-align: center;
-    }
-    .mode-card:hover { background: rgba(241, 196, 15, 0.15); border-color: var(--primary-gold); }
-    .mode-card h3 { margin: 0; color: var(--primary-gold); }
+.box {
+  background: var(--box-bg);
+  padding: 25px;
+  border-radius: 18px;
+  max-width: 800px;
+  margin: auto;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
 
-    .progress-container {
-        width: 100%; background: #333; border-radius: 10px; height: 10px; margin: 20px 0; display: none;
-    }
-    .progress-bar {
-        height: 100%; background: var(--primary-gold); width: 0%; border-radius: 10px; transition: 0.3s;
-    }
+.question {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 18px;
+  line-height: 2;
+  color: #f1f5f9;
+  direction: rtl;
+}
 
-    .question-box {
-        font-size:1.3rem; font-weight:600; margin:20px 0; line-height: 1.6;
-        background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px;
-        border-right: 5px solid var(--primary-gold); display: none;
-    }
+.choice {
+  background: var(--choice-bg);
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+  border: 1px solid transparent;
+  font-size: 16px;
+  line-height: 1.9;
+  direction: rtl;
+  display: block;
+}
+.choice:hover { background: #334155; border-color: var(--primary); }
 
-    .answers { display:none; flex-direction:column; gap:15px; }
+.correct { background: var(--correct) !important; animation: pulse 0.5s; }
+.wrong   { background: var(--wrong)   !important; animation: shake 0.4s; }
 
-    button.answer-btn, .nav-btn, .retry-btn {
-        font-size:1.1rem; padding:15px; border:2px solid #555; border-radius:12px;
-        background:#1c1c1c; color:#ecf0f1; cursor:pointer; transition: 0.2s; text-align:right;
-    }
-    button.answer-btn:hover { background:#333; border-color: var(--primary-gold); }
-    button.answer-btn.correct { background: var(--correct-green) !important; color: #000; font-weight: bold; }
-    button.answer-btn.incorrect { background: var(--wrong-red) !important; color: #fff; }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25%       { transform: translateX(-5px); }
+  75%       { transform: translateX(5px); }
+}
 
-    .nav-btn { background: var(--primary-gold); color: #000; font-weight: bold; border: none; margin-top: 15px; width: 100%; text-align: center;}
-    .nav-btn:hover { opacity: 0.9; transform: scale(1.02); }
+.result-screen { text-align: center; }
+.result-score  { font-size: 40px; color: var(--primary); margin-bottom: 20px; }
 
-    .result-screen { text-align:center; display:none; }
-    .score-text { font-size: 2rem; color: var(--primary-gold); margin-bottom: 20px; }
+.review-item {
+  text-align: right;
+  background: #1e293b;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  border-right: 5px solid var(--wrong);
+}
+.review-q { font-weight: bold; margin-bottom: 5px; line-height: 2; }
+.review-a { font-size: 14px; line-height: 2; }
 
-    .wrong-item {
-        background: rgba(231, 76, 60, 0.1); border-right: 4px solid var(--wrong-red);
-        padding: 15px; margin-bottom: 10px; text-align: right; border-radius: 8px;
-    }
-    .wrong-item span { color: var(--correct-green); font-weight: bold; }
+.btn {
+  background: var(--primary);
+  color: #000;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 10px;
+  transition: 0.3s;
+}
+.btn:hover { transform: scale(1.05); opacity: 0.9; }
 
-    footer { margin-top:30px; text-align:center; font-size:0.9rem; }
-    .links { display:flex; justify-content:center; gap:20px; margin-top:10px; }
- .links a { color: var(--primary-gold); text-decoration:none; font-weight:bold; }    
+footer { margin-top: 30px; text-align: center; color: #94a3b8; font-size: 14px; }
+.social-icons { display: flex; justify-content: center; gap: 16px; margin-bottom: 12px; }
+.social-icons a {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; border-radius: 50%;
+  transition: transform 0.3s, box-shadow 0.3s;
+  text-decoration: none;
+}
+.social-icons a:hover { transform: scale(1.15); }
+.social-icons a.whatsapp { background: #25d366; box-shadow: 0 0 12px #25d36655; }
+.social-icons a.instagram { background: radial-gradient(circle at 30% 110%, #f09433, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888); box-shadow: 0 0 12px #dc274355; }
+.social-icons svg { width: 24px; height: 24px; fill: #fff; }
 </style>
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-F6EV9BT9GV"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-F6EV9BT9GV');
-</script>
-    <!-- Google tag (gtag.js) -->
+  <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-F6EV9BT9GV"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -116,256 +163,331 @@
   gtag('config', 'G-F6EV9BT9GV');
 </script>
 </head>
+
 <body>
 
-<div class="container">
-    <h1 class="title">🌟 إختبار طرق ومهارات الاتصال 🌟</h1>
-    <p style="text-align: center; color: #aaa; margin-top: -10px;">إعداد: ENG/HAMODEY</p>
+<div id="progress-wrapper"><div id="progress-bar"></div></div>
 
-    <div id="mode-selection">
-        <div class="mode-card" onclick="initQuiz('p1')">
-            <h3>📝 الجزء الأول </h3>
-        </div>
-        <div class="mode-card" onclick="initQuiz('p2')">
-            <h3>📝 الجزء الثاني</h3>
-        </div>
-        <div class="mode-card" onclick="initQuiz('full')">
-            <h3>🏆 كل الاسئله  (1 - 80)</h3>
-        </div>
-    </div>
+<div class="header">
+  <div class="name">🔥 العلوم السياسيه🔥</div>
+  <div style="color:#94a3b8; margin-top:5px;">ENG / HAMODEY</div>
+</div>
 
-    <div id="order-selection" style="display:none; text-align: center; margin-top: 20px;">
-        <h3>اختر طريقة عرض الأسئلة:</h3>
-        <button class="nav-btn" onclick="startQuiz('ordered')" style="background: #2980b9; color: white;">🔢 بالترتيب الأصلي</button>
-        <button class="nav-btn" onclick="startQuiz('random')" style="background: #8e44ad; color: white;">🔀 ترتيب عشوائي</button>
-        <button class="nav-btn" onclick="location.reload()" style="background: #555; color: white;">🔙 العودة للرئيسية</button>
-    </div>
+<div class="salah-banner">
+  🌙 اللهم صلِّ وسلِّم وبارك على سيدنا محمد  🌙
+</div>
 
-    <div class="progress-container" id="progCont"><div class="progress-bar" id="progBar"></div></div>
-    <div class="question-box" id="qBox"></div>
-    <div class="answers" id="aBox"></div>
-
-    <div class="result-screen" id="resScreen">
-        <div class="score-text" id="scoreText"></div>
-        <div id="wrongList"></div>
-        <div id="navButtons"></div>
-    </div>
+<div class="box">
+  <div id="setup-screen" class="result-screen">
+    <h3>اختر ترتيب الأسئلة المفضل:</h3>
+    <button class="btn" onclick="startQuiz('original')">الترتيب الأساسي</button>
+    <button class="btn" onclick="startQuiz('shuffle')">ترتيب عشوائي 🔀</button>
+  </div>
+  <div id="quiz" style="display:none;"></div>
 </div>
 
 <footer>
-    <div class="links">
-        <a href="https://wa.me/201016227536">واتساب</a>
-        <a href="https://instagram.com/mo7vmed_elbanna">إنستجرام</a>
-    </div>
-    <p>© جميع الحقوق محفوظة لـ ENG/HAMODEY</p>
+  <div class="social-icons">
+    <a href="https://wa.me/201029268993" target="_blank" class="whatsapp" title="واتساب">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    </a>
+    <a href="https://instagram.com/mo7vmed_elbanna" target="_blank" class="instagram" title="انستاجرام">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+    </a>
+  </div>
+  <p>© جميع الحقوق محفوظة لـ ENG/HAMODEY</p>
 </footer>
 
 <script>
-const allQuestions = [
-  { question: "الاتصال هو عملية تفاعلية بين طرفين أو أكثر لتبادل المعاني والمشاعر والأفكار.", correct: true },
-  { question: "تتكون عملية الاتصال من أربعة عناصر فقط: المرسل، الرسالة، الوسيلة، المستقبل.", correct: false },
-  { question: "يجب أن تكون الرسالة الاتصالية صحيحة وصريحة وواضحة وتامة وموجزة حتى تكون ناجحة.", correct: true },
-  { question: "الاتصال عملية يمكن التراجع عنها بعد حدوثها.", correct: false },
-  { question: "يمكن أن يكون الاتصال قصدياً أو غير قصدي.", correct: true },
-  { question: "من أهداف الاتصال: الأهداف الشخصية والاجتماعية والاقتصادية والنفسية والمعرفية والأمنية.", correct: true },
-  { question: "التغذية الراجعة هي إعادة إرسال الرسالة من المرسل إلى المستقبل.", correct: false },
-  { question: "الاتصال عملية منتهية لها بداية ونهاية محددة.", correct: false },
-  { question: "يعتبر الاتصال عملية رمزية تعتمد على الرموز اللغوية وغير اللغوية.", correct: true },
-  { question: "لا يمكن أن تتشابه عمليات الاتصال بين الأفراد لأنها تخضع لخلفيات وظروف مختلفة.", correct: true },
-  { question: "الاتصال اللفظي يقتصر فقط على الكلام والحديث الشفهي.", correct: false },
-  { question: "لغة الجسد وتعبيرات الوجه تعتبر من أنواع الاتصال غير اللفظي.", correct: true },
-  { question: "الاتصال الذاتي هو التفاعل المباشر بين شخصين أو أكثر لتبادل الأفكار.", correct: false },
-  { question: "من خصائص الاتصال الفعال أن تكون الرسالة واضحة ومباشرة وخالية من الغموض.", correct: true },
-  { question: "الاكتفاء بعبارات عامة مثل \"حسننا الأداء هذا العام\" هو تطبيق لمبدأ الملموسية في الاتصال.", correct: false },
-  { question: "الاتصال الرسمي يتبع قنوات وسلطة محددة في المؤسسات ويكون مخططاً له.", correct: true },
-  { question: "التواصل هو مجرد عملية إرسال واستقبال للمعلومات من مرسل إلى مستقبل.", correct: false },
-  { question: "الافتراض المسبق بأن المستقبل يستوعب الرسالة دون تفصيل كافٍ، يعتبر من معوقات الاتصال.", correct: true },
-  { question: "الاهتمام بلغة الجسد وتعبيرات الوجه لا يؤثر على فعالية الاتصال الشفهي.", correct: false },
-  { question: "التغذية العكسية (Feedback) تساعد في التأكد من فهم الرسالة بشكل صحيح.", correct: true },
-  { question: "يُعد الاتصال التنظيمي عملية ثانوية لنقل التعليمات وليس له علاقة بالقدرة التنافسية للمؤسسات.", correct: false },
-  { question: "من خصائص الاتصال التنظيمي أنه عملية جامدة وثابتة لا تتأثر بالأفراد والجماعات داخل المنظمة.", correct: false },
-  { question: "يعتبر المستقبل (المتلقي) في عملية الاتصال وعاءً سلبياً يتلقى الرسالة دون تفسير أو تفاعل.", correct: false },
-  { question: "من أهداف الاتصال التنظيمي دعم عملية اتخاذ القرار من خلال توفير معلومات دقيقة وفي الوقت المناسب.", correct: true },
-  { question: "الاتصال التصاعدي هو تدفق المعلومات من المستويات الإدارية العليا إلى المستويات الدنيا في الهيكل التنظيمي.", correct: false },
-  { question: "الاتصال غير الرسمي هو أسرع في نقل المعلومات من الاتصال الرسمي لكنه قد يكون أقل دقة.", correct: true },
-  { question: "يقتصر الاتصال غير اللفظي على تعابير الوجه فقط، بينما تتمثل بقية المعاني في الكلمات المنطوقة.", correct: false },
-  { question: "الاتصال الأفقي يحدث بين الأفراد أو الإدارات التي تقع على نفس المستوى الهرمي بهدف التنسيق وتبادل الخبرات.", correct: true },
-  { question: "الاتصال الخارجي يحدث داخل حدود المنظمة فقط ويهدف إلى بناء ثقافة تنظيمية موحدة.", correct: false },
-  { question: "تُعد \"التغذية العكسية\" عنصراً أساسياً في عملية الاتصال التنظيمي، حيث تحول مسار الاتصال من خط مستقيم إلى دائرة تبادلية.", correct: true },
-  { question: "الفعالية التنظيمية هي مفهوم أحادي البعد يركز فقط على تحقيق أعلى ربح ممكن.", correct: false },
-  { question: "وفقًا لنظرية تحديد الأهداف، فإن الأهداف الواضحة والمحددة تؤدي إلى أداء أفضل، ويساعد الاتصال الفعال في تحقيق هذا الوضوح.", correct: true },
-  { question: "الاتصال الأفقي هو ذلك الاتصال الذي يربط بين المستويات الإدارية المختلفة في التسلسل الهرمي (الرئيس بالمرؤوس).", correct: false },
-  { question: "تفترض نظرية \"التبادل الاجتماعي\" أن الأفكار الجديدة تنشأ من تبادل المعرفة بين الأفراد والجماعات، وهذا التبادل لا يحدث إلا عبر الاتصال.", correct: true },
-  { question: "لتحفيز الابتكار، يجب على المنظمة توفير \"الأمان النفسي\" الذي يشعر معه الموظفون بالخوف عند اقتراح أفكار جديدة لضمان الجودة.", correct: false },
-  { question: "بناء الثقة في المنظمة لا يعتمد على الاتصال بقدر ما يعتمد على الحوافز المادية والمكافآت.", correct: false },
-  { question: "الصراع في المنظمات ظاهرة غير طبيعية ويجب على الإدارة الجيدة أن تمنعه تمامًا.", correct: false },
-  { question: "من آليات نقل الثقافة التنظيمية عبر الاتصال، قصص الأبطال والإنجازات، واللغة المستخدمة، وسلوك القادة الفعلي.", correct: true },
-  { question: "كثرة المستويات الإدارية تقلل من فرص تشويه الرسالة لأنها تمر بمراجعات متعددة تضمن دقتها.", correct: false },
-  { question: "من عوائق الاتصال التقنية (الرقمية) \"فقدان الإشارات غير اللفظية\" في الاتصال الكتابي، مما يزيد من فرص سوء الفهم.", correct: true },
-  { question: "يعرف الاتصال الفعال بأنه الاتصال الذي يؤدي إلى خلق استجابة تجاه أهداف المؤسسة بأحسن الوسائل وأقل التكاليف.", correct: true },
-  { question: "من مقومات الاتصال التنظيمي الفعال، أن تحتوي العملية الاتصالية على معلومات جديدة، وإلا اعتبرت اتصالات مزعجة.", correct: true },
-  { question: "من مقومات الاتصال التنظيمي الفعال ضرورة زيادة عدد المستويات الإدارية ومركزية القرار.", correct: false },
-  { question: "من خصائص المعلومات في الاتصال الفعال أن تكون المعلومات غير دقيقة وطويلة لتفسيرها بشكل أفضل من قبل المتلقي.", correct: false },
-  { question: "الإنصات النشط (Active Listening) هو الاستماع بهدف الرد السريع، وليس بهدف الفهم العميق.", correct: false },
-  { question: "مهارة الوضوح والإيجاز في الاتصال تساعد على توفير الوقت وتقلل الحاجة إلى إعادة الشرح والتوضيح.", correct: true },
-  { question: "التعاطف (Empathy) هو القدرة على نقل المعلومات فقط، بغض النظر عن مشاعر الآخرين.", correct: false },
-  { question: "من آثار التغذية الراجعة البناءة (Constructive Feedback) أنها تزيد الدفاعية وتقلل الانفتاح بين الأفراد.", correct: false },
-  { question: "المتصل الفعال هو من يستخدم أسلوب اتصال واحدًا ثابتًا يناسب جميع المواقف والأشخاص.", correct: false },
-  { question: "تسهم مهارات الاتصال الفعال في إيجاد حلول فعالة للمشكلات، وتزيد من ثقة الفرد بنفسه.", correct: true },
-  { question: "يعني مبدأ المشاركة في الإدارة اشتراك المرؤوسين في جميع خطوات عملية اتخاذ القرار.", correct: false },
-  { question: "من أسباب فشل الاجتماعات غياب جدول الأعمال الموزع مسبقًا.", correct: true },
-  { question: "تعد التقارير التحليلية مقتصرة على وصف الظاهرة فقط دون تعليل الأسباب.", correct: false },
-  { question: "مرحلة ما بعد انعقاد الاجتماع تشمل توثيق الاجتماع وتقييمه ومتابعة تنفيذ القرارات.", correct: true },
-  { question: "الملخص الوصفي في التقارير يلخص نتائج البحث بالكامل.", correct: false },
-  { question: "من ضوابط التعامل مع زملاء العمل تجنب الغيبة والوشاية والابتعاد عن القيل والقال.", correct: true },
-  { question: "الزميل \"المتحكم والمسيطر\" هو الذي يتصف بالكسل ويوزع مسؤولياته على الآخرين.", correct: false },
-  { question: "من مهارات التعامل مع العملاء مقاطعتهم أثناء شرح المشكلة لتوفير الوقت.", correct: false },
-  { question: "التقارير الإدارية غالبًا ما تكون مطبوعة وبنودها واضحة وتحتاج إلى ملء فراغات.", correct: true },
-  { question: "عدم مشاركة الزملاء في أفراحهم وأحزانهم يخلق فجوة ويجعلهم يشعرون بعدم الاحترام.", correct: true },
-  { question: "معوقات الاتصال يمكن أن تكون مادية (كالضوضاء) أو نفسية (كالغضب).", correct: true },
-  { question: "جميع معوقات الاتصال متساوية في الشدة والتأثير.", correct: false },
-  { question: "معوقات الاتصال تظهر فقط في مرحلة القناة (الوسيط) وليس في مرحلة المرسل أو المستقبل.", correct: false },
-  { question: "يمكن علاج معظم معوقات الاتصال أو تقليل تأثيرها باستراتيجيات مناسبة.", correct: true },
-  { question: "سوء الاتصال يؤدي إلى زيادة التكاليف التشغيلية مثل إعادة العمل وتلف المواد.", correct: true },
-  { question: "ضعف الاتصال الداخلي لا يؤثر على حصة السوق أو ولاء العملاء.", correct: false },
-  { question: "الموظفون في الصفوف الأمامية نادراً ما يملكون أفكاراً ابتكارية، لذلك لا تتأثر المنظمة بفقدان تواصلهم.", correct: false },
-  { question: "الغموض الدائم في الاتصال يسبب قلقاً مزمناً وإجهاداً وظيفياً.", correct: true },
-  { question: "معوقات الاتصال تساعد على تحسين التعاون بين الإدارات المختلفة.", correct: false },
-  { question: "دراسة معوقات الاتصال تساعد في تقليل الصراعات الشخصية الناتجة عن سوء الفهم.", correct: true },
-  { question: "الاستماع الفعال يعني فقط عدم التحدث أثناء حديث الطرف الآخر، دون الحاجة إلى إعادة الصياغة أو طرح أسئلة توضيحية.", correct: false },
-  { question: "من خصائص استراتيجيات التغلب على معوقات الاتصال \"الشمولية والنظرة المنظومية\"، أي أنها تعالج المرسل والرسالة والوسيلة والمستقبل والبيئة معاً.", correct: true },
-  { question: "وضوح الرسالة وإيجازها يساعدان في التغلب على معوق \"الحمل المعلوماتي الزائد\" (Information Overload).", correct: true },
-  { question: "التغذية الراجعة (Feedback) ليست ضرورية إذا كان المرسل يثق بأن المستقبل فهمه تماماً.", correct: false },
-  { question: "الانتباه للغة الجسد والنبرة يساعد في علاج معوق \"التناقض بين الكلمات والجسد\"، حيث أن 93% من تأثير الرسالة يأتي من غير اللفظي.", correct: true },
-  { question: "اختيار وقت غير مناسب (مثل قبل نهاية الدوام بربع ساعة) لا يؤثر على فعالية الاتصال، طالما أن الرسالة واضحة.", correct: false },
-  { question: "التعاطف (Empathy) يعني الموافقة الكاملة على وجهة نظر الطرف الآخر، وليس مجرد فهم مشاعره.", correct: false },
-  { question: "تكييف أسلوب الاتصال يشمل مراعاة الفروق في المستوى الوظيفي؛ فالحديث مع الرئيس يختلف عن الحديث مع المرؤوس.", correct: true },
-  { question: "من خصائص الاستراتيجيات الفعالة \"الاستمرارية\"، أي أنها مجرد إسعاف أولي مؤقت ينتهي بانتهاء المشكلة.", correct: false },
-  { question: "\"الاستباقية\" (Proactiveness) في استراتيجيات الاتصال تعني انتظار وقوع سوء الفهم ثم البحث عن حل سريع.", correct: false },
+const originalQuestions = [
+
+{q:`1) ظهرت في العصور ......... مجموعة من الأفكار والفلسفات القائمة على ما سبقتها في العصور السابقة`,
+ choices:[`أ) القديمة`,`ب) الوسطى`,`ج) الحديثة`,`د) المعاصرة`], correct:2},
+
+{q:`2) تبدأ فترة العصور ......... منذ بداية القرن العشرين وتستمر حتى الآن`,
+ choices:[`أ) القديمة`,`ب) الوسطى`,`ج) الحديثة`,`د) المعاصرة`], correct:3},
+
+{q:`3) تبدأ العصور ......... بسقوط روما وزوال الإمبراطورية الرومانية الغربية على يد القبائل الجرمانية عام 476 م`,
+ choices:[`أ) القديمة`,`ب) الوسطى`,`ج) الحديثة`,`د) المعاصرة`], correct:1},
+
+{q:`4) تنتهي العصور ......... بسقوط القسطنطينية عاصمة الإمبراطورية الرومانية الشرقية على يد الأتراك المسلمين العثمانيين`,
+ choices:[`أ) القديمة`,`ب) الوسطى`,`ج) الحديثة`,`د) المعاصرة`], correct:1},
+
+{q:`5) تنقسم دراسة الفكر السياسي في العصور ......... إلى ثلاثة أقسام رئيسة`,
+ choices:[`أ) القديمة`,`ب) الوسطى`,`ج) الحديثة`,`د) المعاصرة`], correct:0},
+
+{q:`6) عرّف ......... علم السياسة بأنه "دراسة عملية التوزيع السلطوي للقيم المختلفة من أجل المجتمع"`,
+ choices:[`أ) ديفيد إيستون`,`ب) ابن خلدون`,`ج) آدم سميث`,`د) هارولد لاسويل`], correct:0},
+
+{q:`7) عرّف ......... علم السياسة بأنه "دراسة النفوذ وأصحاب النفوذ"`,
+ choices:[`أ) ديفيد إيستون`,`ب) ابن خلدون`,`ج) آدم سميث`,`د) هارولد لاسويل`], correct:3},
+
+{q:`8) ......... هو عبارة عن مجموعة من المبادئ والقواعد التي أثبتت التجربة صحتها`,
+ choices:[`أ) المعرفة`,`ب) العلم`,`ج) الفلسفة`,`د) التاريخ`], correct:1},
+
+{q:`9) ......... من الناحية اللغوية هو شيء يتعلق بالشؤون العامة للبشر`,
+ choices:[`أ) المعرفة`,`ب) السياسة`,`ج) الفلسفة`,`د) التاريخ`], correct:1},
+
+{q:`10) تعريف ......... "القدرة على جعل المحكوم يعمل أو لا يعمل أشياء محددة سواء أراد أم لم يُرد ذلك"`,
+ choices:[`أ) المعرفة`,`ب) السلطة السياسية`,`ج) الفلسفة`,`د) التاريخ`], correct:1},
+
+{q:`11) يمثل قانون الجنسية والقانون الدولي الخاص أحد عناصر الدولة وهو ..........`,
+ choices:[`أ) الإقليم`,`ب) المواطنون`,`ج) الحكومة`,`د) الاستقلال`], correct:1},
+
+{q:`12) ......... هو كامل مساحة الأرض التي تتبع الدولة ويقيم عليها مواطنوها`,
+ choices:[`أ) الإقليم`,`ب) المواطنون`,`ج) الحكومة`,`د) الاستقلال`], correct:0},
+
+{q:`13) ......... هي السلطة العليا العامة في المجتمع بفروعها الثلاث: التشريع والتنفيذ والقضاء`,
+ choices:[`أ) الإقليم`,`ب) المواطنون`,`ج) الحكومة`,`د) الاستقلال`], correct:2},
+
+{q:`14) يُعرَّف ......... بأنه "الحكومة وكل ما يرتبط بها من تنظيمات تسهم في صناعة القرارات أو في ممارسة السلطة"`,
+ choices:[`أ) الإقليم`,`ب) المواطنون`,`ج) النظام السياسي`,`د) الاستقلال`], correct:2},
+
+{q:`15) يوجد ارتباط بين مفهوم السيادة و.........`,
+ choices:[`أ) الإقليم`,`ب) المواطنون`,`ج) النظام السياسي`,`د) الاستقلال`], correct:3},
+
+{q:`16) ......... عبارة عن اجتماع دولتين تحت رئاسة صاحب عرش واحد مع احتفاظ كل دولة باستقلالها داخلياً وخارجياً`,
+ choices:[`أ) الاتحاد الشخصي`,`ب) الاتحاد الحقيقي`,`ج) الاتحاد الكونفدرالي`,`د) الاتحاد الفيدرالي`], correct:0},
+
+{q:`17) ......... عبارة عن جمع رئاسة دولتين أو أكثر في شخص واحد مع إدارة بعض شؤونها المشتركة من خلال هيئات مشتركة`,
+ choices:[`أ) الاتحاد الشخصي`,`ب) الاتحاد الحقيقي`,`ج) الاتحاد الكونفدرالي`,`د) الاتحاد الفيدرالي`], correct:1},
+
+{q:`18) ......... اتحاد يتكون من مجموعة من الدول تتفق فيما بينها بمقتضى معاهدة دولية على إقامة هيئة مشتركة`,
+ choices:[`أ) الاتحاد الشخصي`,`ب) الاتحاد الحقيقي`,`ج) الاتحاد الكونفدرالي`,`د) الاتحاد الفيدرالي`], correct:2},
+
+{q:`19) ......... عبارة عن دولة واحدة مكونة من ولايات أعضاء متحدة في ظل دستور عام`,
+ choices:[`أ) الاتحاد الشخصي`,`ب) الاتحاد الحقيقي`,`ج) الاتحاد الفيدرالي`,`د) الاتحاد الكونفدرالي`], correct:2},
+
+{q:`20) ينقسم التشريع ......... في الدولة الفيدرالية عادةً من مجلسين`,
+ choices:[`أ) الفيدرالي`,`ب) الكونفدرالي`,`ج) الاتحادي`,`د) الموحد`], correct:0},
+
+{q:`21) يتم اتخاذ القرار في مرحلة ..........`,
+ choices:[`أ) صنع القرار`,`ب) تنفيذ القرار`,`ج) تسويق القرار`,`د) جميع ما سبق`], correct:0},
+
+{q:`22) في مرحلة ......... يُنوط بالحكومة وضع آليات تنفيذ القرار`,
+ choices:[`أ) صنع القرار`,`ب) تنفيذ القرار`,`ج) تسويق القرار`,`د) جميع ما سبق`], correct:1},
+
+{q:`23) ......... يُعتبر أحد المظاهر التي تجعل النظام السياسي يمتلك المصداقية`,
+ choices:[`أ) صنع القرار`,`ب) تنفيذ القرار`,`ج) تسويق القرار`,`د) جميع ما سبق`], correct:1},
+
+{q:`24) يُطلق على ......... بالجهاز الإعلامي`,
+ choices:[`أ) صنع القرار`,`ب) تنفيذ القرار`,`ج) تسويق القرار`,`د) جميع ما سبق`], correct:2},
+
+{q:`25) من خصائص ......... أن يتمتع كل المواطنين المؤهلين بالمشاركة المباشرة والفعالة في صنع القرار`,
+ choices:[`أ) الديمقراطية المباشرة`,`ب) الديمقراطية غير المباشرة`,`ج) الديمقراطية التمثيلية`,`د) الديمقراطية شبه المباشرة`], correct:0},
+
+{q:`26) يُقصد بالمفهوم ......... مجموعة القواعد القانونية التي تتضمنها الوثيقة الدستورية`,
+ choices:[`أ) الموضوعي`,`ب) الشكلي`,`ج) القانوني`,`د) الدستوري`], correct:1},
+
+{q:`27) يُقصد بالمفهوم ......... مجموعة القواعد التي تنظم شكل الدولة ونظام الحكم وطبيعة العلاقة بين السلطات واختصاصاتها`,
+ choices:[`أ) الموضوعي`,`ب) الشكلي`,`ج) القانوني`,`د) الدستوري`], correct:0},
+
+{q:`28) تُعرَّف الحكومة ......... بأنها تلك الحكومة التي لا يخضع فيها الحكام إلى حكم القانون`,
+ choices:[`أ) البرلمانية`,`ب) الاستبدادية`,`ج) القانونية`,`د) الملكية`], correct:1},
+
+{q:`29) تُعرَّف الحكومة ......... بأنها الحكومة التي يخضع الحكام فيها لمنظومة القوانين النافذة في الدولة`,
+ choices:[`أ) البرلمانية`,`ب) الاستبدادية`,`ج) القانونية`,`د) الملكية`], correct:2},
+
+{q:`30) تتركز السلطة في الحكومة ......... في جهة واحدة`,
+ choices:[`أ) البرلمانية`,`ب) الاستبدادية`,`ج) القانونية`,`د) المطلقة`], correct:3},
+
+{q:`31) يستمد الحاكم سلطته في ظل الحكومة ......... غالباً عن طريق القوة`,
+ choices:[`أ) الدكتاتورية`,`ب) الديمقراطية`,`ج) الفردية`,`د) المطلقة`], correct:0},
+
+{q:`32) يتولى شؤون السلطة في الحكومة ......... فرد واحد`,
+ choices:[`أ) الدكتاتورية`,`ب) الديمقراطية`,`ج) الفردية`,`د) المطلقة`], correct:2},
+
+{q:`33) لا يسمح رئيس الدولة في الحكومة ......... لأي جهة أن تشاركه في الحكم`,
+ choices:[`أ) الدكتاتورية`,`ب) الديمقراطية`,`ج) الفردية`,`د) المطلقة`], correct:3},
+
+{q:`34) تكون الحكومة ......... بمثابة مرحلة انتقالية من الحكومة الفردية إلى الحكومة الديمقراطية`,
+ choices:[`أ) الدكتاتورية`,`ب) الأرستقراطية`,`ج) الفردية`,`د) المطلقة`], correct:1},
+
+{q:`35) يكون الشعب في الحكومة ......... هو صاحب السيادة ومصدر السلطة`,
+ choices:[`أ) الدكتاتورية`,`ب) الديمقراطية`,`ج) الفردية`,`د) المطلقة`], correct:1},
+
+{q:`36) سنّ ملوك الدولة ......... سنة جديدة وهي الاشتراك في الحكم`,
+ choices:[`أ) القديمة`,`ب) الوسطى`,`ج) الحديثة`,`د) البطلمية`], correct:1},
+
+{q:`37) ظهر ولي العهد للملك في عهد الدولة .........`,
+ choices:[`أ) القديمة`,`ب) الوسطى`,`ج) الحديثة`,`د) البطلمية`], correct:1},
+
+{q:`38) يتميز عصر الدولة ......... بأن وحدة البلاد وصلت فيها تمامها`,
+ choices:[`أ) القديمة`,`ب) الوسطى`,`ج) الحديثة`,`د) البطلمية`], correct:0},
+
+{q:`39) شهدت الإدارة المالية وإدارة الأشغال أهمية كبيرة في عهد الدولة .........`,
+ choices:[`أ) القديمة`,`ب) الوسطى`,`ج) الحديثة`,`د) البطلمية`], correct:1},
+
+{q:`40) أنشأت الدولة ......... أداة حكومية قوية كانت ترتكز على ما كان سائداً في مصر القديمة`,
+ choices:[`أ) القديمة`,`ب) الوسطى`,`ج) الحديثة`,`د) البطلمية`], correct:3},
+
+{q:`41) كانت الحكومة في عهد محمد علي باشا حكومة .........`,
+ choices:[`أ) مطلقة`,`ب) دكتاتورية`,`ج) ديمقراطية`,`د) نيابية`], correct:0},
+
+{q:`42) أنشأ محمد علي مجلساً للحكومة أطلق عليه .........`,
+ choices:[`أ) البرلمان`,`ب) الديوان العالي`,`ج) مجلس القضاء`,`د) جميع ما سبق`], correct:1},
+
+{q:`43) ألّف محمد علي مجلساً في العام 1834 أطلق عليه .........`,
+ choices:[`أ) المجلس العالي`,`ب) مجلس الوزراء`,`ج) مجلس الأمن`,`د) مجلس الوصاية`], correct:0},
+
+{q:`44) تم إصدار اللائحة السعيدية في عهد ......... في العام 1857 م`,
+ choices:[`أ) إبراهيم باشا`,`ب) إسماعيل باشا`,`ج) سعيد باشا`,`د) الخديوي توفيق`], correct:2},
+
+{q:`45) شهدت حقبة ......... تأسيس بعض الأنظمة المهمة التي كانت نواةً لمجالس شهدت الاستقرار فيما بعد`,
+ choices:[`أ) إبراهيم باشا`,`ب) إسماعيل باشا`,`ج) سعيد باشا`,`د) الخديوي توفيق`], correct:1},
+
+{q:`46) عقب الاستقلال بموجب تصريح 28 فبراير تم تشكيل لجنة لوضع مبادئ الدستور من ......... عضواً`,
+ choices:[`أ) عشرين`,`ب) ثلاثين`,`ج) أربعين`,`د) خمسين`], correct:1},
+
+{q:`47) اتبع دستور 1923 نظام .........`,
+ choices:[`أ) المجلس الواحد`,`ب) المجلسين`,`ج) الثلاثة مجالس`,`د) الأربعة مجالس`], correct:1},
+
+{q:`48) حصل حزب ......... في أول انتخابات لمجلس النواب في 27 سبتمبر 1923 على الأغلبية المطلقة`,
+ choices:[`أ) الوفد`,`ب) مصر الفتاة`,`ج) الأمة`,`د) مصر الحرة`], correct:0},
+
+{q:`49) كلّف الملك فؤاد زعيم الوفد ......... بتشكيل الحكومة عقب انتخابات مجلس النواب في 27 سبتمبر 1923`,
+ choices:[`أ) عدلي يكن`,`ب) شريف باشا`,`ج) عبد الخالق ثروت`,`د) سعد زغلول`], correct:3},
+
+{q:`50) تتميز فترة ......... بكثرة التعديلات فيما يتعلق بالنظم الدستورية والنظم القانونية والمؤسسات الحاكمة في الدولة`,
+ choices:[`أ) الجمهورية`,`ب) الملكية`,`ج) الاحتلال البريطاني`,`د) جميع ما سبق`], correct:0},
+
+{q:`51) وفقاً لدستور عام 2014، فإن السلطة التشريعية في مصر تتكون من .........`,
+ choices:[`أ) مجلس واحد`,`ب) مجلسين`,`ج) ثلاثة مجالس`,`د) أربعة مجالس`], correct:0},
+
+{q:`52) تتضمن السلطة التشريعية وظيفتين هما ......... وفقاً لدستور عام 2014`,
+ choices:[`أ) التشريعية والقضائية`,`ب) التشريعية والتنفيذية`,`ج) التشريعية والمالية`,`د) المالية والقضائية`], correct:2},
+
+{q:`53) تتكون السلطة ......... من رئيس الدولة ومجلس الوزراء`,
+ choices:[`أ) التنفيذية`,`ب) التشريعية`,`ج) القضائية`,`د) الاقتصادية`], correct:0},
+
+{q:`54) يقوم رئيس الجمهورية بالاشتراك مع ......... بوضع السياسة العامة للدولة والإشراف على تنفيذها وفقاً لدستور 2014`,
+ choices:[`أ) مجلس النواب`,`ب) مجلس الشورى`,`ج) مجلس الأمة`,`د) مجلس الوزراء`], correct:3},
+
+{q:`55) تُعدّ ......... هي الهيئة التنفيذية والإدارية العليا للدولة وفقاً لدستور 2014`,
+ choices:[`أ) الحكومة`,`ب) النواب`,`ج) الشورى`,`د) جميع ما سبق`], correct:0},
+
+{q:`56) يُعدّ وقوع مصر بين قارات العالم الثلاث (أفريقيا، آسيا، أوروبا) من محددات البيئة الداخلية التي تبرز أهمية .........`,
+ choices:[`أ) الموقع الجغرافي`,`ب) الموارد البشرية`,`ج) القدرات والظروف الاقتصادية`,`د) القدرات العسكرية`], correct:0},
+
+{q:`57) تُعدّ مصر من ضمن الدول الأكثر تعداداً في الشرق الأوسط، يظهر هذا المحدد الداخلي الذي يمثل .........`,
+ choices:[`أ) الموقع الجغرافي`,`ب) الموارد البشرية`,`ج) القدرات والظروف الاقتصادية`,`د) القدرات العسكرية`], correct:1},
+
+{q:`58) تبيّن وفرة الأيدي العاملة اللازمة لعملية التنمية الاقتصادية المحدد الداخلي المتمثل في .........`,
+ choices:[`أ) الموقع الجغرافي`,`ب) الموارد البشرية`,`ج) القدرات والظروف الاقتصادية`,`د) القدرات العسكرية`], correct:2},
+
+{q:`59) تُعدّ ثورة الاتصالات والمعلومات التي أدت إلى إحداث تقارب بين الدول والمجتمعات إحدى المحددات الداخلية المتمثلة في .........`,
+ choices:[`أ) الموقع الجغرافي`,`ب) الموارد البشرية`,`ج) القدرات والظروف الاجتماعية`,`د) القدرات العسكرية`], correct:2},
+
+{q:`60) يتصدر الجيش المصري المرتبة الأولى في ترتيب أقوى الجيوش في الشرق الأوسط من حيث القوة العسكرية، يمثل هذا المحدد الداخلي .........`,
+ choices:[`أ) الموقع الجغرافي`,`ب) الموارد البشرية`,`ج) القدرات والظروف الاقتصادية`,`د) القدرات العسكرية`], correct:3},
+
+{q:`61) تتجه دول منابع النيل ......... الهادفة لإنشاء مفوضية حوض النيل والتوسع في مشروعات مائية دون الأخذ في الاعتبار حقوق دولتَي المصبّ (مصر، السودان)`,
+ choices:[`أ) إثيوبيا - أوغندا`,`ب) نيجيريا - النيجر`,`ج) السنغال - غانا`,`د) تشاد - ساحل العاج`], correct:0},
+
+{q:`62) يهيمن ......... على التجارة الخارجية العربية`,
+ choices:[`أ) الولايات المتحدة الأمريكية`,`ب) الاتحاد الأوروبي`,`ج) دول شرق آسيا`,`د) دول جنوب شرق آسيا`], correct:1},
+
+{q:`63) تم التوجه نحو تطبيقات ......... لجمع وتحليل البيانات الضخمة في ظل المحددات الخارجية المحيطة بالنظام السياسي المصري في المجال الأمني والعسكري`,
+ choices:[`أ) الذكاء الاصطناعي`,`ب) الأمن السيبراني`,`ج) التكنولوجيا`,`د) أ + ب`], correct:3},
+
+{q:`64) تقدمت ......... في مجال الصناعات الدفاعية وتصنيع طائرات من الجيل الخامس`,
+ choices:[`أ) الإمارات`,`ب) إسرائيل`,`ج) إيران`,`د) تركيا`], correct:3},
+
+{q:`65) شهد العالم منذ انهيار ......... وحتى مطلع عام 2020 تحولات مهمة في هيكل النظام الدولي`,
+ choices:[`أ) الاتحاد السوفيتي`,`ب) الاتحاد الأوروبي`,`ج) اتحاد الدول الأمريكية`,`د) اتحاد دول الكومنولث`], correct:0},
+
 ];
-
-let currentQuestions = [];
-let quizMode = '';
-let currentIndex = 0;
+/* ===== منطق الكويز ===== */
+let questions = [];
+let index = 0;
 let score = 0;
-let missed = [];
+let locked = false;
+let userHistory = [];
+const quiz = document.getElementById("quiz");
+const setupScreen = document.getElementById("setup-screen");
+const progBar = document.getElementById("progress-bar");
 
-function initQuiz(mode) {
-    quizMode = mode;
-    document.getElementById('mode-selection').style.display = 'none';
-    document.getElementById('order-selection').style.display = 'block';
+function startQuiz(order) {
+  if (order === 'shuffle') {
+    questions = [...originalQuestions].sort(() => Math.random() - 0.5);
+  } else {
+    questions = [...originalQuestions];
+  }
+  setupScreen.style.display = "none";
+  quiz.style.display = "block";
+  showQuestion();
 }
 
-function startQuiz(orderType) {
-    if (quizMode === 'p1') {
-        currentQuestions = allQuestions.slice(0, 40);
-    } else if (quizMode === 'p2') {
-        currentQuestions = allQuestions.slice(40);
-    } else {
-        currentQuestions = [...allQuestions];
-    }
-
-    if (orderType === 'random') {
-        currentQuestions.sort(() => Math.random() - 0.5);
-    }
-
-    document.getElementById('order-selection').style.display = 'none';
-    document.getElementById('progCont').style.display = 'block';
-    document.getElementById('qBox').style.display = 'block';
-    document.getElementById('aBox').style.display = 'flex';
-
-    renderQuestion();
+function showQuestion() {
+  const progress = (index / questions.length) * 100;
+  progBar.style.width = progress + "%";
+  if (index >= questions.length) { finishQuiz(); return; }
+  locked = false;
+  const q = questions[index];
+  quiz.innerHTML = `
+    <div style="color:var(--primary); font-size:14px; margin-bottom:10px;">سؤال ${index+1} من ${questions.length}</div>
+    <div class="question">${q.q}</div>
+    ${q.choices.map((c,i) => `<div class="choice" onclick="answer(this,${i})">${c}</div>`).join("")}
+  `;
 }
 
-function renderQuestion() {
-    if (currentIndex >= currentQuestions.length) {
-        showResults();
-        return;
-    }
+function answer(el, i) {
+  if (locked) return;
+  locked = true;
+  const q = questions[index];
+  userHistory.push({
+    question: q.q,
+    userAnswer: q.choices[i],
+    correctAnswer: q.choices[q.correct],
+    isCorrect: i === q.correct
+  });
+  if (i === q.correct) {
+    el.classList.add("correct");
+    score++;
+  } else {
+    el.classList.add("wrong");
+    if (navigator.vibrate) navigator.vibrate(200);
+    document.querySelectorAll(".choice")[q.correct].classList.add("correct");
+  }
+  setTimeout(() => { index++; showQuestion(); }, 1200);
+}
 
-    const q = currentQuestions[currentIndex];
-    document.getElementById('qBox').innerHTML = q.question;
+function finishQuiz() {
+  progBar.style.width = "100%";
+  const percent = Math.round((score / questions.length) * 100);
+  if (percent >= 50) confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+  quiz.innerHTML = `
+    <div class="result-screen">
+      <div class="result-score">${score} / ${questions.length}</div>
+      <h3>${percent >= 50 ? "أحسنت يا بشمهندس! 🎉" : "حاول مرة أخرى! 💪"}</h3>
+      <p>نسبة النجاح: ${percent}%</p>
+      <button class="btn" onclick="location.reload()">إعادة الاختبار</button>
+      <button class="btn" style="background:#fff" onclick="showReview()">مراجعة الأخطاء فقط 🧐</button>
+    </div>
+  `;
+}
 
-    const percent = (currentIndex / currentQuestions.length) * 100;
-    document.getElementById('progBar').style.width = percent + '%';
-
-    const aBox = document.getElementById('aBox');
-    aBox.innerHTML = '';
-
-    ['صح', 'خطأ'].forEach((text, i) => {
-        const btn = document.createElement('button');
-        btn.className = 'answer-btn';
-        btn.textContent = text;
-        btn.onclick = () => checkAnswer(i === 0, q, btn);
-        aBox.appendChild(btn);
+function showReview() {
+  const errors = userHistory.filter(item => !item.isCorrect);
+  let reviewHTML = `<h3 style="color:var(--primary)">الأخطاء التي وقعت فيها (${errors.length}):</h3>`;
+  if (errors.length === 0) {
+    reviewHTML += `<p>ممتاز! لا توجد أخطاء لمراجعتها.</p>`;
+  } else {
+    errors.forEach(item => {
+      reviewHTML += `
+        <div class="review-item">
+          <div class="review-q">${item.question}</div>
+          <div class="review-a">
+            إجابتك: <span style="color:var(--wrong)">${item.userAnswer}</span><br><br>
+            الإجابة الصحيحة: <span style="color:var(--correct)">${item.correctAnswer}</span>
+          </div>
+        </div>`;
     });
-}
-
-function checkAnswer(userAns, qObj, btn) {
-    const allBtns = document.querySelectorAll('.answer-btn');
-    allBtns.forEach(b => b.disabled = true);
-
-    if (userAns === qObj.correct) {
-        btn.classList.add('correct');
-        score++;
-    } else {
-        btn.classList.add('incorrect');
-        missed.push({ q: qObj.question, a: qObj.correct ? 'صح' : 'خطأ' });
-    }
-
-    setTimeout(() => {
-        currentIndex++;
-        renderQuestion();
-    }, 600);
-}
-
-function showResults() {
-    document.getElementById('progCont').style.display = 'none';
-    document.getElementById('qBox').style.display = 'none';
-    document.getElementById('aBox').style.display = 'none';
-
-    const resScreen = document.getElementById('resScreen');
-    resScreen.style.display = 'block';
-
-    document.getElementById('scoreText').textContent = `نتيجتك: ${score} من ${currentQuestions.length}`;
-
-    const wrongList = document.getElementById('wrongList');
-    wrongList.innerHTML = missed.length > 0 ? '<h3>❌ الأسئلة التي أخطأت فيها:</h3>' : '<h3 style="color:var(--correct-green)">🌟 ممتاز! لا توجد أخطاء.</h3>';
-
-    missed.forEach(item => {
-        const div = document.createElement('div');
-        div.className = 'wrong-item';
-        div.innerHTML = `❓ ${item.q} <br> ✅ الإجابة الصحيحة هي: <span>${item.a}</span>`;
-        wrongList.appendChild(div);
-    });
-
-    const nav = document.getElementById('navButtons');
-    nav.innerHTML = '';
-
-    if (quizMode === 'p1') {
-        const nextBtn = document.createElement('button');
-        nextBtn.className = 'nav-btn';
-        nextBtn.textContent = '➡️ انتقل لإمتحان الجزء الثاني';
-        nextBtn.onclick = () => { resetVars(); initQuiz('p2'); };
-        nav.appendChild(nextBtn);
-    }
-
-    const homeBtn = document.createElement('button');
-    homeBtn.className = 'nav-btn';
-    homeBtn.style.background = '#555';
-    homeBtn.style.color = '#fff';
-    homeBtn.textContent = '🔄 العودة للقائمة الرئيسية';
-    homeBtn.onclick = () => location.reload();
-    nav.appendChild(homeBtn);
-}
-
-function resetVars() {
-    currentIndex = 0;
-    score = 0;
-    missed = [];
-    document.getElementById('resScreen').style.display = 'none';
+  }
+  reviewHTML += `<button class="btn" onclick="location.reload()">العودة للرئيسية</button>`;
+  quiz.innerHTML = reviewHTML;
+  window.scrollTo(0, 0);
 }
 </script>
-
 </body>
 </html>
